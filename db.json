@@ -1,0 +1,20 @@
+{
+  "queries": {
+    "searchProcedure": {
+      "sql": "SELECT id, titulo, descricao FROM procedure WHERE conteudo ILIKE $1 ORDER BY similarity(conteudo, $1) DESC LIMIT 10",
+      "description": "Retrieve procedures matching a search query"
+    },
+    "getProcedureById": {
+      "sql": "SELECT * FROM procedure WHERE id = $1",
+      "description": "Retrieve a procedure by its ID"
+    },
+    "getAllCategoriesAndProcedures": {
+      "sql": "SELECT DISTINCT categoria FROM procedure",
+      "description": "Retrieve all categories and their associated procedures"
+    },
+    "getAllCards": {
+      "sql": "SELECT * FROM cards",
+      "description": "Retrieve all cards"
+    }
+  }
+}
