@@ -1,3 +1,4 @@
+require('dotenv').config();
 const app = require('./app');
 const express = require('express');
 const cardlistHandler = require('./cardlist');
@@ -7,7 +8,7 @@ const searchHandler = require('./search');
 
 const PORT = process.env.PORT || 3000;
 
-// Rotas
+// Define as rotas da API
 app.get('/api/cardlist', cardlistHandler);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/procedure', procedureHandler);
@@ -15,5 +16,5 @@ app.get('/api/search', searchHandler);
 
 // Inicia o servidor
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

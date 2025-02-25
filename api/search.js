@@ -1,19 +1,20 @@
 const { Pool } = require('pg');
 
+// Configura o pool de conexão usando a variável de ambiente
 const pool = new Pool({
-  connectionString: 'Enter your database connection here',
-  ssl: { rejectUnauthorized: false }
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false // Ajuste conforme necessário
+  }
 });
 
 async function handler(req, res) {
-  // Configuração dos cabeçalhos de CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Não use '*' em produção!
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Não utilize '*' em produção
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
   if (req.method === 'OPTIONS') {
-    // Método OPTIONS é utilizado como preflight pelo CORS, nós respondemos apenas com os cabeçalhos
     return res.status(200).end();
   }
 
@@ -29,10 +30,10 @@ async function handler(req, res) {
       [searchTerms]
     );
 
-    return res.status(200).json(result.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
-    return res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
+    res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
   }
 }
 
