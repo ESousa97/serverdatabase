@@ -2,8 +2,11 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false, // Permite certificados autoassinados
+    ca: process.env.SUPABASE_CA_CERT || undefined // Certificado CA opcional
+  }
 });
 
 async function handler(req, res) {
@@ -22,7 +25,6 @@ async function handler(req, res) {
       return res.status(400).json({ message: 'ID do procedimento não fornecido' });
     }
 
-    // Nome da tabela corrigido para 'procedures'
     const query = 'SELECT * FROM public.procedures WHERE id = $1';
     const { rows } = await pool.query(query, [id]);
 
