@@ -1,9 +1,12 @@
+// Adicione esta linha no topo do seu arquivo
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false } // Permite certificados autoassinados
+  ssl: { rejectUnauthorized: false }
 });
 
 async function handler(req, res) {
