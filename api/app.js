@@ -2,6 +2,7 @@ const { createPool } = require('@vercel/postgres');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
 
 // Habilita o CORS
 app.use(cors());
