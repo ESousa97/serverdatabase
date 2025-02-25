@@ -1,17 +1,14 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Cria o pool de conexão utilizando a variável de ambiente
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false // Ajuste conforme necessário
-  }
+  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Não utilize '*' em produção
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Evite '*' em produção
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
@@ -25,7 +22,7 @@ async function handler(req, res) {
       return res.status(400).json({ message: 'ID do procedimento não fornecido' });
     }
 
-    const query = 'SELECT * FROM procedure WHERE id = $1';
+    const query = 'SELECT * FROM "public"."procedure" WHERE id = $1'; // Ajuste no nome da tabela
     const { rows } = await pool.query(query, [id]);
 
     if (rows.length === 0) {
