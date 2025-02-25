@@ -3,15 +3,12 @@ require('dotenv').config();
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false, // Permite certificados autoassinados
-    ca: process.env.SUPABASE_CA_CERT || undefined // Certificado CA opcional
-  }
+  ssl: { rejectUnauthorized: false } // Permite certificados autoassinados
 });
 
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Evite '*' em produção
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
