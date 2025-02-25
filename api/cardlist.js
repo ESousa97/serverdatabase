@@ -4,9 +4,9 @@ require('dotenv').config();
 
 // Cria o pool de conexão usando a variável de ambiente para a string de conexão
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: process.env.POSTGRES_URL + "?sslmode=require",
   ssl: {
-    rejectUnauthorized: false // Ajuste conforme seu ambiente
+    rejectUnauthorized: false
   }
 });
 
