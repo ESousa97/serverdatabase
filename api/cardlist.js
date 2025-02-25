@@ -1,19 +1,18 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-
-// Cria o pool de conexão usando a variável de ambiente para a string de conexão
+// Cria o pool de conexão utilizando a string de conexão atualizada
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
   ssl: {
     rejectUnauthorized: false
   }
 });
 
 async function handler(req, res) {
-  // Configuração dos cabeçalhos de CORS
+  // Configuração dos cabeçalhos CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Não utilize '*' em produção
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Em produção, defina a origem permitida
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
