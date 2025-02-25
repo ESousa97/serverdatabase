@@ -1,17 +1,17 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Cria o pool de conexão com as configurações SSL
+// Configura o pool de conexão com a variável de ambiente
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
+  connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Ajuste conforme seu ambiente
   }
 });
 
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Não utilize '*' em produção
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
@@ -20,7 +20,7 @@ async function handler(req, res) {
   }
   
   try {
-    // Exemplo: consulta na tabela "procedure" para retornar categorias (ajuste conforme sua estrutura)
+    // Supondo que sua tabela de categorias esteja na tabela "procedure" conforme o seu exemplo
     const { rows } = await pool.query('SELECT * FROM procedure;');
     res.status(200).json(rows);
   } catch (error) {

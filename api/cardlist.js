@@ -1,9 +1,12 @@
+// Apenas para desenvolvimento: ignora a verificação de certificados SSL
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Cria o pool de conexão utilizando a string de conexão atualizada
+// Usa a string de conexão definida no .env sem duplicar o parâmetro sslmode
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
+  connectionString: process.env.POSTGRES_URL,
   ssl: {
     rejectUnauthorized: false
   }

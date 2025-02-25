@@ -1,17 +1,17 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Cria o pool de conexão com as configurações de SSL
+// Configura o pool de conexão usando a variável de ambiente
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
+  connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Ajuste conforme necessário
   }
 });
 
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Não utilize '*' em produção
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
@@ -24,11 +24,13 @@ async function handler(req, res) {
     if (!query) {
       return res.status(400).json({ error: 'Termo de busca não fornecido' });
     }
+
     const searchTerms = `%${query}%`;
     const result = await pool.query(
-      'SELECT * FROM procedure WHERE conteudo ILIKE $1 ORDER BY similarity(conteudo, $1) DESC LIMIT 10',
+      'SELECT * FROM procedure WHERE conteudo ILIKE $1 ORDER BY similarity(conteudo, $1) DESC LIMIT 10', 
       [searchTerms]
     );
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
