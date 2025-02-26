@@ -1,5 +1,5 @@
-require('dotenv').config();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // Desativa a verificação de certificados
+require('dotenv').config();
 
 const fs = require('fs');
 const { Pool } = require('pg');
