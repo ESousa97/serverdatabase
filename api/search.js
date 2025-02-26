@@ -39,7 +39,7 @@ async function handler(req, res) {
 
     const searchTerms = `%${query}%`;
     const result = await pool.query(
-      'SELECT * FROM procedure WHERE conteudo ILIKE $1 ORDER BY similarity(conteudo, $1) DESC LIMIT 10', 
+      'SELECT * FROM procedures WHERE conteudo ILIKE $1 ORDER BY similarity(conteudo, $1) DESC LIMIT 10', 
       [searchTerms]
     );
 
