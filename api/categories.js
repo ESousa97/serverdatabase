@@ -1,13 +1,19 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Configura o pool de conexão com a variável de ambiente
+// Importar CORS
+const cors = require('cors');
+
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false // Ajuste conforme seu ambiente
-  }
+  ssl: { rejectUnauthorized: false }
 });
+
+// Habilitar CORS
+const corsOptions = {
+  origin: ['http://localhost:3000','http://localhost:8000','https://esdatabasev2.vercel.app/'], // ⚠️ Em produção, use 'https://seu-site.com' para mais segurança
+  credentials: true
+};
 
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);

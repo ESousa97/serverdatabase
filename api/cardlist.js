@@ -1,23 +1,28 @@
-// Apenas para desenvolvimento: ignora a verificação de certificados SSL
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Usa a string de conexão definida no .env sem duplicar o parâmetro sslmode
+// Importar CORS
+const cors = require('cors');
+
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
+// Habilitar CORS
+const corsOptions = {
+  origin: ['http://localhost:3000','http://localhost:8000','https://esdatabasev2.vercel.app/'], // ⚠️ Em produção, use 'https://seu-site.com' para mais segurança
+  credentials: true
+};
+
 async function handler(req, res) {
-  // Configuração dos cabeçalhos CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*'); // Em produção, defina a origem permitida
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
