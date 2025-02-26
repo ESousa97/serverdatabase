@@ -33,7 +33,7 @@ async function handler(req, res) {
   
   try {
     // Supondo que sua tabela de categorias esteja na tabela "procedure" conforme o seu exemplo
-    const { rows } = await pool.query('SELECT * FROM procedure;');
+    const { rows } = await pool.query('SELECT * FROM procedures;');
     res.status(200).json(rows);
   } catch (error) {
     console.error('Erro ao buscar dados das categorias:', error);
