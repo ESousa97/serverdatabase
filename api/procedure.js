@@ -1,17 +1,21 @@
-// Adicione esta linha no topo do seu arquivo
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 const { Pool } = require('pg');
 require('dotenv').config();
+const cors = require('cors');
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false }
 });
 
+// Configuração correta do CORS para produção
+const corsOptions = {
+  origin: ['https://esdatabasev2.vercel.app'], // 🚀 Permitir apenas seu domínio
+  credentials: true
+};
+
 async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://esdatabasev2.vercel.app'); // 🚀 Domínio autorizado
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
@@ -39,4 +43,5 @@ async function handler(req, res) {
   }
 }
 
-module.exports = handler;
+// Aplicar CORS corretamente
+module.exports = (req, res) => cors(corsOptions)(req, res, () => handler(req, res));
