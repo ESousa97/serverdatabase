@@ -1,5 +1,4 @@
-const Procedure = require('../models/procedure');
-const { Sequelize } = require('sequelize');
+const Project = require('../models/project');
 const cors = require('cors');
 
 const corsOptions = {
@@ -29,19 +28,20 @@ async function handler(req, res) {
   }
 
   try {
-    // Retorna categorias distintas da tabela de procedimentos
-    const categories = await Procedure.findAll({
-      attributes: [
-        [Sequelize.fn('DISTINCT', Sequelize.col('categoria')), 'categoria']
-      ]
-    });
-    res.status(200).json(categories);
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).json({ message: 'ID do procedimento não fornecido' });
+    }
+
+    const project = await project.findOne({ where: { id } });
+    if (!project) {
+      return res.status(404).json({ message: 'Procedimento não encontrado' });
+    }
+
+    res.status(200).json(project);
   } catch (error) {
-    console.error('Erro ao buscar dados das categorias:', error);
-    res.status(500).json({
-      message: 'Erro ao consultar o banco de dados',
-      error: error.message
-    });
+    console.error('Erro ao buscar dados do procedimento:', error);
+    res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
   }
 }
 

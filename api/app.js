@@ -1,28 +1,18 @@
-const { createPool } = require('@vercel/postgres');
 const express = require('express');
 const cors = require('cors');
-const app = express();
 require('dotenv').config();
+const sequelize = require('../models');
 
-// Habilita o CORS
+const app = express();
+
 app.use(cors());
+app.use(express.json()); // Adiciona o middleware para parse de JSON
 
-// Obtém a string de conexão a partir da variável de ambiente
-const connectionString = process.env.POSTGRES_URL;
-
-// Cria o pool de conexão utilizando @vercel/postgres
-const pool = createPool({ connectionString });
-
-// Função para testar a conexão com o banco de dados
+// Testa a conexão via Sequelize
 async function connectToDatabase() {
   try {
-    const client = await pool.connect();
-    console.log('Conectado ao banco de dados PostgreSQL');
-    
-    const result = await client.query('SELECT NOW()');
-    console.log('Data e hora do banco:', result.rows[0].now);
-    
-    client.release();
+    await sequelize.authenticate();
+    console.log('Conectado ao banco de dados via Sequelize');
   } catch (error) {
     console.error('Erro ao conectar ao banco de dados:', error);
   }

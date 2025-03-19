@@ -3,19 +3,19 @@
   "functions": {
     "api/cardlist.js": {
       "memory": 1024,
-      "includeFiles": "db.json"
+      "includeFiles": "models/**"
     },
     "api/categories.js": {
       "memory": 1024,
-      "includeFiles": "db.json"
+      "includeFiles": "models/**"
     },
     "api/procedure.js": {
       "memory": 1024,
-      "includeFiles": "db.json"
+      "includeFiles": "models/**"
     },
     "api/search.js": {
       "memory": 1024,
-      "includeFiles": "db.json"
+      "includeFiles": "models/**"
     }
   },
   "rewrites": [

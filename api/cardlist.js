@@ -1,46 +1,49 @@
-require('dotenv').config();
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // Desativa a verificação de certificados
+const Card = require('../models/card');
+const cors = require('cors');
 
-const fs = require('fs');
-const { Pool } = require('pg');
-const cors = require('cors'); // Importa o módulo cors
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:8000',
+  'https://esdatabasev2.vercel.app/'
+];
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false
-    // O campo "ca" pode ser removido, pois a verificação está desativada.
-    // Caso prefira manter o arquivo de certificado, ele não fará efeito.
-    // ca: fs.readFileSync('./certs/supabase-ca.crt', 'utf8')
-  }
-});
-
-// Habilitar CORS
 const corsOptions = {
-  origin: ['http://localhost:3000','http://localhost:8000','https://esdatabasev2.vercel.app/'], // ⚠️ Em produção, use 'https://seu-site.com' para mais segurança
-  credentials: true
+  origin: function(origin, callback) {
+    // Permite requisições sem origin (ex: curl ou requisições server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
+  allowedHeaders: [
+    'X-CSRF-Token',
+    'X-Requested-With',
+    'Accept',
+    'Accept-Version',
+    'Content-Length',
+    'Content-MD5',
+    'Content-Type',
+    'Date',
+    'X-Api-Version'
+  ]
 };
 
 async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Em produção, defina a origem permitida
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
   try {
-    const { rows } = await pool.query('SELECT * FROM cards;');
-    res.status(200).json(rows);
+    const cards = await Card.findAll();
+    res.status(200).json(cards);
   } catch (error) {
     console.error('Erro ao buscar dados dos cards:', error);
     res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
   }
 }
 
-module.exports = handler;
+module.exports = cors(corsOptions)(handler);
