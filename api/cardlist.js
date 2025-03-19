@@ -9,7 +9,6 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function(origin, callback) {
-    // Permite requisições sem origin (ex: curl ou requisições server-to-server)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
@@ -33,9 +32,7 @@ const corsOptions = {
 };
 
 async function handler(req, res) {
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     const cards = await Card.findAll();

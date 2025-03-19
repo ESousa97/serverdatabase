@@ -9,7 +9,7 @@
       "memory": 1024,
       "includeFiles": "models/**"
     },
-    "api/procedure.js": {
+    "api/project.js": {
       "memory": 1024,
       "includeFiles": "models/**"
     },
@@ -24,8 +24,8 @@
       "destination": "/api/search.js"
     },
     {
-      "source": "/api/procedure/:id",
-      "destination": "/api/procedure.js"
+      "source": "/api/project/:id",
+      "destination": "/api/project.js"
     },
     {
       "source": "/api/categories",

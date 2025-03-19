@@ -1,12 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const sequelize = require('../models');
+const { sequelize } = require('../models');
 
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // Adiciona o middleware para parse de JSON
+app.use(express.json());
 
 // Testa a conexão via Sequelize
 async function connectToDatabase() {
