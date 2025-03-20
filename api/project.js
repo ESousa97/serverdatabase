@@ -1,26 +1,4 @@
 const { Project } = require('../models');
-const cors = require('cors');
-
-const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'https://esdatabasev2.vercel.app/'
-  ],
-  credentials: true,
-  methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
-  allowedHeaders: [
-    'X-CSRF-Token',
-    'X-Requested-With',
-    'Accept',
-    'Accept-Version',
-    'Content-Length',
-    'Content-MD5',
-    'Content-Type',
-    'Date',
-    'X-Api-Version'
-  ]
-};
 
 async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -39,4 +17,4 @@ async function handler(req, res) {
   }
 }
 
-module.exports = cors(corsOptions)(handler);
+module.exports = handler;
