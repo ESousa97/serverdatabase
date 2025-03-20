@@ -7,7 +7,7 @@ const categoriesHandler = require('./categories');
 const projectHandler = require('./project');
 const searchHandler = require('./search');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 // Define as rotas da API
 app.get('/api/cardlist', cardlistHandler);
