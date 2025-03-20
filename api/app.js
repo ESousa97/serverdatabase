@@ -11,7 +11,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:8000',
-    'https://esdatabasev2.vercel.app/'
+    'https://esdatabasev2.vercel.app'
   ],
   credentials: true
 }));
