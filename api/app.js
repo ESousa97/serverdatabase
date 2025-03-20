@@ -5,16 +5,23 @@ const { sequelize } = require('../models');
 
 const app = express();
 
-app.use(cors());
+// Configuração global do CORS
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://esdatabasev2.vercel.app/'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
-// Testa a conexão via Sequelize e sincroniza os modelos (opcional)
-// Se estiver utilizando migrations, o sync() não é obrigatório
+// Testa a conexão via Sequelize
 async function connectToDatabase() {
   try {
     await sequelize.authenticate();
     console.log('Conectado ao banco de dados via Sequelize');
-    // await sequelize.sync(); // Descomente se desejar sincronizar os modelos automaticamente
   } catch (error) {
     console.error('Erro ao conectar ao banco de dados:', error);
   }
