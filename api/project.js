@@ -1,4 +1,4 @@
-const Project = require('../models/project');
+const { Project } = require('../models');
 const cors = require('cors');
 
 const corsOptions = {

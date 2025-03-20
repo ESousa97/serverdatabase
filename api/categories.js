@@ -1,5 +1,4 @@
-const Project = require('../models/project');
-const { Sequelize } = require('sequelize');
+const { Project, Sequelize } = require('../models');
 const cors = require('cors');
 
 const corsOptions = {

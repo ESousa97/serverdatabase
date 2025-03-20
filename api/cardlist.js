@@ -1,4 +1,4 @@
-const Card = require('../models/card');
+const { Card } = require('../models');
 const cors = require('cors');
 
 const allowedOrigins = [
