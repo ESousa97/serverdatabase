@@ -10,7 +10,7 @@ const projectRouter = require('./project'); // Agora, este router possui todas a
 const PORT = process.env.PORT || 8000;
 
 // Define as rotas da API
-app.get('/api/cardlist', cardlistHandler);
+app.use('/api/cards', require('./cardlist'));
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
