@@ -1,12 +1,12 @@
-// /api/app.js
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { sequelize } = require('../models');
+const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(cookieParser());
 
-// Configuração global do CORS
 app.use(cors({
   origin: [
     'http://localhost:3000',
@@ -18,7 +18,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// Testa a conexão via Sequelize
 async function connectToDatabase() {
   try {
     await sequelize.authenticate();
