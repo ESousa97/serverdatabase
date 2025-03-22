@@ -1,9 +1,9 @@
+// /api/index.js
 require('dotenv').config();
-const express = require('express');
-const app = require('./app');
 
-const authRoutes = require('./auth/authRoutes');
-const authenticateToken = require('./auth/authMiddleware');
+const app = require('./app');
+const express = require('express');
+const authRouter = require('./auth'); // novo router de autenticação
 const cardlistHandler = require('./cardlist');
 const categoriesHandler = require('./categories');
 const searchHandler = require('./search');
@@ -11,8 +11,10 @@ const projectRouter = require('./project');
 
 const PORT = process.env.PORT || 8000;
 
-app.use('/api/auth', authRoutes);
-app.use(authenticateToken);
+// Monta o router de autenticação
+app.use('/api/auth', authRouter);
+
+// Outras rotas da API
 app.use('/api/cards', cardlistHandler);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
