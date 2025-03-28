@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "apt-get update && apt-get install -y python3-distutils && npm install",
+  "installCommand": "npm install",
   "buildCommand": "npm run build",
   "functions": {
     "api/index.js": {
