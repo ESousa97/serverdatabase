@@ -4,8 +4,7 @@
   "description": "Deploy JSON Server to Vercel",
   "main": "api/index.js",
   "scripts": {
-    "start": "node api/index.js",
-    "postinstall": "npm rebuild sqlite3 --build-from-source"
+    "start": "node api/index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
