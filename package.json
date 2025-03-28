@@ -4,7 +4,8 @@
   "description": "Deploy JSON Server to Vercel",
   "main": "api/index.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node api/index.js",
+    "postinstall": "npm rebuild sqlite3"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -20,5 +21,8 @@
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
