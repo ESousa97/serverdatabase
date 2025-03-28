@@ -1,26 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "bash vercel-build.sh",
+  "installCommand": "apt-get update && apt-get install -y python3-distutils && npm install",
+  "buildCommand": "npm run build",
   "functions": {
     "api/index.js": {
-      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/lib/binding/**/*"
+      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/**/*"
     },
     "api/cardlist.js": {
       "memory": 1024,
-      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/lib/binding/**/*"
+      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/**/*"
     },
     "api/categories.js": {
       "memory": 1024,
-      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/lib/binding/**/*"
+      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/**/*"
     },
     "api/project.js": {
       "memory": 1024,
-      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/lib/binding/**/*"
+      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/**/*"
     },
     "api/search.js": {
       "memory": 1024,
-      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/lib/binding/**/*"
+      "includeFiles": "database.sqlite,models/**,node_modules/sqlite3/**/*"
     }
   },
   "rewrites": [
