@@ -12,10 +12,10 @@ app.use(cookieParser());
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
   : [
+      'https://esdatabase-projmanage.vercel.app',
+      'https://esdatabasev2.vercel.app',
       'http://localhost:3000',
       'http://localhost:8000',
-      'https://esdatabasev2.vercel.app',
-      'https://esdatabase-projmanage.vercel.app'
     ];
 
 app.use(cors({
