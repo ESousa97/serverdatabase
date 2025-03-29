@@ -4,7 +4,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const { sequelize } = require('../models');
-// const serverless = require('serverless-http'); // <- REMOVER
 
 const authRouter = require('./auth/authRoutes');
 const cardlistRouter = require('./cardlist');
@@ -16,14 +15,13 @@ const searchHandler = require('./search');
 const app = express();
 app.use(cookieParser());
 
-// Configura CORS
+// Configura CORS com as origens permitidas
 app.use(cors({
-  origin: (origin, callback) => {
-    // Se não tiver origem (ex: Postman), libera
-    if (!origin) return callback(null, true);
-    // Senão, reflete a origem recebida
-    return callback(null, true);
-  },
+  // Lista explicitamente os domínios que podem acessar
+  origin: [
+    'https://esdatabase-projmanage.vercel.app',
+    'https://esdatabasev2.vercel.app'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -32,7 +30,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Conecta no banco
+// Conecta no banco (assíncrono)
 (async function connectDB() {
   try {
     await sequelize.authenticate();
@@ -49,7 +47,6 @@ app.use('/api/projects', projectRouter);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
-// AQUI você chama app.listen, pois não é mais serverless:
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
