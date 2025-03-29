@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 app.use(cookieParser());
 
-// Configure as origens permitidas a partir do .env ou use um array fixo
+// /api/app.js (linhas relevantes)
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
   : [
@@ -20,7 +20,7 @@ const allowedOrigins = process.env.CORS_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Permite requisições sem origem (ex.: ferramentas como curl ou Postman)
+    // Permite requisições sem origem (ex.: Postman ou curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
@@ -28,7 +28,8 @@ app.use(cors({
       return callback(new Error('Not allowed by CORS'), false);
     }
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200  // Força status 200 para preflight
 }));
 
 app.use(express.json());
