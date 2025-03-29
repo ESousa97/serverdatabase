@@ -24,24 +24,8 @@
   },
   "rewrites": [
     {
-      "source": "/api/auth/:path*",
+      "source": "/api/(.*)",
       "destination": "/api/index.js"
-    },
-    {
-      "source": "/api/search",
-      "destination": "/api/search.js"
-    },
-    {
-      "source": "/api/project/:id",
-      "destination": "/api/project.js"
-    },
-    {
-      "source": "/api/categories",
-      "destination": "/api/categories.js"
-    },
-    {
-      "source": "/api/cards",
-      "destination": "/api/cardlist.js"
     }
   ]
 }
