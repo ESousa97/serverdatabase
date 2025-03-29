@@ -1,34 +1,34 @@
-// /api/index.js
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const { sequelize } = require('../models');
+const serverless = require('serverless-http');
 
+// Importar rotas
 const authRouter = require('./auth/authRoutes');
 const cardlistRouter = require('./cardlist');
 const projectRouter = require('./project');
 const categoriesHandler = require('./categories');
 const searchHandler = require('./search');
 
+// Cria app Express
 const app = express();
 app.use(cookieParser());
-
 app.use(cors({
   origin: '*',
   credentials: true,
   optionsSuccessStatus: 200
 }));
-
 app.use(express.json());
 
-// Conexão com o banco
+// Conecta no banco (assíncrono)
 (async function connectDB() {
   try {
     await sequelize.authenticate();
-    console.log('Conectado ao banco de dados via Sequelize');
-  } catch (e) {
-    console.error('Erro ao conectar ao banco:', e);
+    console.log('Conectado ao banco via Sequelize');
+  } catch (err) {
+    console.error('Erro ao conectar:', err);
   }
 })();
 
@@ -39,6 +39,6 @@ app.use('/api/projects', projectRouter);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
-// Aqui NÃO chamamos app.listen(...)!
-// Em vez disso, simplesmente exportamos o app:
-module.exports = app;
+// NÃO faça app.listen(...).
+// Em vez disso, exporte com serverless-http:
+module.exports = serverless(app);
