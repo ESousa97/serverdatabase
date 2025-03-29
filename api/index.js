@@ -1,11 +1,11 @@
+// /api/index.js
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const { sequelize } = require('../models');
-const serverless = require('serverless-http');
+// const serverless = require('serverless-http'); // <- REMOVER
 
-// Importar rotas
 const authRouter = require('./auth/authRoutes');
 const cardlistRouter = require('./cardlist');
 const projectRouter = require('./project');
@@ -27,12 +27,12 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200 // Se você quiser retornar 200 ao invés de 204 no preflight
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json());
 
-// Conecta no banco (assíncrono)
+// Conecta no banco
 (async function connectDB() {
   try {
     await sequelize.authenticate();
@@ -42,12 +42,15 @@ app.use(express.json());
   }
 })();
 
-// Suas rotas
+// Rotas
 app.use('/api/auth', authRouter);
 app.use('/api/cards', cardlistRouter);
 app.use('/api/projects', projectRouter);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
-// Exporta com serverless-http (não usamos app.listen no Vercel)
-module.exports = serverless(app);
+// AQUI você chama app.listen, pois não é mais serverless:
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
