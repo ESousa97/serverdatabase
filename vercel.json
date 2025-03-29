@@ -24,6 +24,10 @@
   },
   "rewrites": [
     {
+      "source": "/api/auth/:path*",
+      "destination": "/api/index.js"
+    },
+    {
       "source": "/api/search",
       "destination": "/api/search.js"
     },
