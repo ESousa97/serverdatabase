@@ -8,32 +8,16 @@ const cookieParser = require('cookie-parser');
 const app = express();
 app.use(cookieParser());
 
-// /api/app.js (linhas relevantes)
-const allowedOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(',')
-  : [
-      'https://esdatabase-projmanage.vercel.app',
-      'https://esdatabasev2.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:8000',
-    ];
-
+// Se você quiser literalmente liberar geral, sem checar origem:
 app.use(cors({
-  origin: (origin, callback) => {
-    // Permite requisições sem origem (ex.: Postman ou curl)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'), false);
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200  // Força status 200 para preflight
+  origin: '*',
+  credentials: true,  // Se estiver usando cookies, browsers podem barrar a combinação '*' + credentials.
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json());
 
+// Conexão com o banco
 async function connectToDatabase() {
   try {
     await sequelize.authenticate();
