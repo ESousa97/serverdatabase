@@ -15,11 +15,21 @@ const searchHandler = require('./search');
 // Cria app Express
 const app = express();
 app.use(cookieParser());
+
+// Configura CORS
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    // Se não tiver origem (ex: Postman), libera
+    if (!origin) return callback(null, true);
+    // Senão, reflete a origem recebida
+    return callback(null, true);
+  },
   credentials: true,
-  optionsSuccessStatus: 200
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200 // Se você quiser retornar 200 ao invés de 204 no preflight
 }));
+
 app.use(express.json());
 
 // Conecta no banco (assíncrono)
@@ -39,6 +49,5 @@ app.use('/api/projects', projectRouter);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
-// NÃO faça app.listen(...).
-// Em vez disso, exporte com serverless-http:
+// Exporta com serverless-http (não usamos app.listen no Vercel)
 module.exports = serverless(app);
