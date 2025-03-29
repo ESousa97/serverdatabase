@@ -5,18 +5,15 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const { sequelize } = require('../models');
 
-// Importar as rotas que você quer
 const authRouter = require('./auth/authRoutes');
 const cardlistRouter = require('./cardlist');
 const projectRouter = require('./project');
 const categoriesHandler = require('./categories');
 const searchHandler = require('./search');
 
-// Cria app
 const app = express();
 app.use(cookieParser());
 
-// CORS geral
 app.use(cors({
   origin: '*',
   credentials: true,
@@ -25,7 +22,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Conecta banco
+// Conexão com o banco
 (async function connectDB() {
   try {
     await sequelize.authenticate();
@@ -35,15 +32,13 @@ app.use(express.json());
   }
 })();
 
-// **Registra rotas** 
+// Suas rotas
 app.use('/api/auth', authRouter);
 app.use('/api/cards', cardlistRouter);
 app.use('/api/projects', projectRouter);
 app.get('/api/categories', categoriesHandler);
 app.get('/api/search', searchHandler);
 
-// Sobe o servidor
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// Aqui NÃO chamamos app.listen(...)!
+// Em vez disso, simplesmente exportamos o app:
+module.exports = app;
