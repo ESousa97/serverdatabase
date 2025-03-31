@@ -22,12 +22,13 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const app = express();
 
+// Configura o CORS...
 app.use(cors({
   origin: [
     'https://esdatabase-projmanage.vercel.app',
     'https://esdatabasev2.vercel.app',
     'http://localhost:3000',
-    'http://localhost:3001',
+    'http://localhost:3001'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -36,16 +37,20 @@ app.use(cors({
   exposedHeaders: ['X-CSRF-Token']
 }));
 
-// 2. Outros middlewares de segurança e utilitários
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 
-// 3. Inicializa o middleware CSRF (ele ignora métodos GET, HEAD e OPTIONS por padrão)
-const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
+// Aplica o CSRF middleware condicionalmente:
+app.use((req, res, next) => {
+  // Pule CSRF para a rota de login
+  if (req.path === '/api/v1/auth/login') {
+    return next();
+  }
+  return csrf({ cookie: true })(req, res, next);
+});
 
-// 4. Endpoint para disponibilizar o token CSRF
+// Endpoint para disponibilizar o token CSRF
 app.get('/api/v1/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
