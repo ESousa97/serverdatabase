@@ -22,7 +22,6 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const app = express();
 
-// 1. Configurar CORS antes de qualquer outro middleware
 app.use(cors({
   origin: [
     'https://esdatabase-projmanage.vercel.app',
@@ -32,9 +31,8 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-XSRF-TOKEN'],
   optionsSuccessStatus: 200,
-  // Opcional: Se quiser expor o cabeçalho do token CSRF:
   exposedHeaders: ['X-CSRF-Token']
 }));
 
