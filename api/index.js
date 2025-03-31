@@ -15,6 +15,7 @@ if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
+// Verifica se as variáveis de ambiente de JWT estão definidas
 if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
   logger.error("JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables.");
   process.exit(1);
@@ -22,7 +23,7 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const app = express();
 
-// Configura o CORS...
+// Configura o CORS
 app.use(cors({
   origin: [
     'https://esdatabase-projmanage.vercel.app',
@@ -41,13 +42,22 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 
+// Configura o middleware csurf com cookie compatível com HTTPS e cross-site em produção
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // true em produção (HTTPS)
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+  }
+});
+
 // Aplica o CSRF middleware condicionalmente:
+// Pula APENAS o /auth/login. As demais rotas, incluindo logout, são protegidas.
 app.use((req, res, next) => {
-  // Pule CSRF para a rota de login
   if (req.path === '/api/v1/auth/login') {
     return next();
   }
-  return csrf({ cookie: true })(req, res, next);
+  return csrfProtection(req, res, next);
 });
 
 // Endpoint para disponibilizar o token CSRF
@@ -70,6 +80,7 @@ const options = {
   },
   apis: ['./api/*.js', './api/auth/*.js'],
 };
+
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 

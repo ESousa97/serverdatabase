@@ -147,3 +147,5 @@
     at C:\Users\sousa\Projects\serverdatabase\node_modules\express\lib\router\index.js:286:9
 2025-03-31 15:35:37 [[32minfo[39m] Servidor rodando na porta 8000
 2025-03-31 15:35:37 [[32minfo[39m] Conectado ao banco via Sequelize
+2025-03-31 15:41:03 [[32minfo[39m] Servidor rodando na porta 8000
+2025-03-31 15:41:03 [[32minfo[39m] Conectado ao banco via Sequelize
