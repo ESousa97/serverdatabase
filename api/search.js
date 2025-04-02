@@ -12,7 +12,7 @@ async function handler(req, res) {
     const searchTerms = `%${query}%`;
     const sql = `
       SELECT * FROM projects
-      WHERE conteudo LIKE :searchTerms COLLATE NOCASE
+      WHERE conteudo ILIKE :searchTerms
       LIMIT 10
     `;
     const results = await sequelize.query(sql, {

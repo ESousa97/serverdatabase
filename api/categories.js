@@ -1,14 +1,17 @@
+// /api/categories.js
 const { Project, Sequelize } = require('../models');
 
 async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Retorna categorias distintas da tabela projects
+    // Para cada categoria distinta, retorna também o menor título (pode ser adaptado conforme necessário)
     const categories = await Project.findAll({
       attributes: [
-        [Sequelize.fn('DISTINCT', Sequelize.col('categoria')), 'categoria']
-      ]
+        'categoria',
+        [Sequelize.fn('MIN', Sequelize.col('titulo')), 'titulo']
+      ],
+      group: ['categoria']
     });
     res.status(200).json(categories);
   } catch (error) {
