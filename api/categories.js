@@ -5,11 +5,12 @@ async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Para cada categoria distinta, retorna também o menor título (pode ser adaptado conforme necessário)
+    // Para cada categoria distinta, retorna também o menor título e o menor ID (representativo)
     const categories = await Project.findAll({
       attributes: [
         'categoria',
-        [Sequelize.fn('MIN', Sequelize.col('titulo')), 'titulo']
+        [Sequelize.fn('MIN', Sequelize.col('titulo')), 'titulo'],
+        [Sequelize.fn('MIN', Sequelize.col('id')), 'id']
       ],
       group: ['categoria']
     });
