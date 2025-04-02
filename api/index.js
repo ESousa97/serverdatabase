@@ -65,6 +65,11 @@ app.get('/api/v1/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
+// Endpoint de keep-alive
+app.get('/api/v1/ping', (req, res) => {
+  res.status(200).json({ pong: true });
+});
+
 // Configuração do Swagger
 const options = {
   definition: {
