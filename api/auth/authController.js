@@ -1,7 +1,8 @@
-const authService = require('../../services/authService');
-const logger = require('../../utils/logger');
+// api/auth/authController.js
+import * as authService from '../../services/authService.js';
+import logger from '../../utils/logger.js';
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const { accessToken, refreshToken } = await authService.login(email, password);
@@ -19,7 +20,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.refresh = async (req, res) => {
+export const refresh = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
     if (!token) return res.sendStatus(401);
@@ -30,7 +31,7 @@ exports.refresh = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
+export const logout = (req, res) => {
   res.clearCookie('refreshToken');
   res.status(200).json({ message: 'Logout realizado com sucesso' });
 };

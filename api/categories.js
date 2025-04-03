@@ -1,5 +1,6 @@
-// /api/categories.js
-const { Project, Sequelize } = require('../models');
+// api/categories.js
+import db from '../models/index.js';
+const { Project, Sequelize } = db;
 
 async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -21,4 +22,4 @@ async function handler(req, res) {
   }
 }
 
-module.exports = handler;
+export default handler;

@@ -1,4 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
+// models/card.js
+export default (sequelize, DataTypes) => {
   const Card = sequelize.define('Card', {
     id: {
       type: DataTypes.INTEGER,

@@ -1,7 +1,9 @@
-// /api/cardlist.js
-const express = require('express');
+// api/cardlist.js
+import express from 'express';
+import db from '../models/index.js';
+const { Card } = db;
+
 const router = express.Router();
-const { Card } = require('../models');
 
 // Listar todos os cards
 router.get('/', async (req, res) => {
@@ -76,4 +78,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

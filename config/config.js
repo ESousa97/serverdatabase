@@ -1,6 +1,8 @@
-require('dotenv').config();
+// config/config.js
+import dotenv from 'dotenv';
+dotenv.config();
 
-module.exports = {
+const config = {
   development: {
     dialect: 'sqlite',
     storage: process.env.SQLITE_STORAGE || './database.sqlite'
@@ -24,3 +26,5 @@ module.exports = {
     }
   }
 };
+
+export default config;

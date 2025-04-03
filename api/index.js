@@ -1,21 +1,23 @@
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
-const csrf = require('csurf');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-require('dotenv').config();
-const { sequelize } = require('../models');
-const logger = require('../utils/logger');
-const Sentry = require('@sentry/node');
+// api/index.js
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import csrf from 'csurf';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import dotenv from 'dotenv';
+dotenv.config();
+import db from '../models/index.js';
+const { sequelize } = db;
+ // ajuste o caminho se necessário
+import logger from '../utils/logger.js';
+import * as Sentry from '@sentry/node';
 
-// Inicializa o Sentry se a DSN estiver definida
 if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
-// Verifica se as variáveis de ambiente de JWT estão definidas
 if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
   logger.error("JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables.");
   process.exit(1);
@@ -23,7 +25,6 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const app = express();
 
-// Configura o CORS
 app.use(cors({
   origin: [
     'https://esdatabase-projmanage.vercel.app',
@@ -42,17 +43,15 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 
-// Configura o middleware csurf com cookie compatível com HTTPS e cross-site em produção
+// Configuração do CSRF
 const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true em produção (HTTPS)
+    secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
   }
 });
 
-// Aplica o CSRF middleware condicionalmente:
-// Pula APENAS o /auth/login. As demais rotas, incluindo logout, são protegidas.
 app.use((req, res, next) => {
   if (req.path === '/api/v1/auth/login') {
     return next();
@@ -60,12 +59,10 @@ app.use((req, res, next) => {
   return csrfProtection(req, res, next);
 });
 
-// Endpoint para disponibilizar o token CSRF
 app.get('/api/v1/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-// Endpoint de keep-alive
 app.get('/api/v1/ping', (req, res) => {
   res.status(200).json({ pong: true });
 });
@@ -99,20 +96,24 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
   }
 })();
 
-// Rotas (todas versionadas em /api/v1)
-const authRouter = require('./auth/authRoutes');
-const cardlistRouter = require('./cardlist');
-const projectRouter = require('./project');
-const categoriesHandler = require('./categories');
-const searchHandler = require('./search');
+// Importação das rotas – cada módulo DEVE exportar o router como default
+import authRouter from './auth/authRoutes.js';
+import cardlistRouter from './cardlist.js';
+import projectRouter from './project.js';
+import categoriesHandler from './categories.js';
+import searchHandler from './search.js';
+import imageuploadRouter from './imageupload.js';
+import directoryListRouter from './directorylist.js';
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/cards', cardlistRouter);
 app.use('/api/v1/projects', projectRouter);
 app.get('/api/v1/categories', categoriesHandler);
 app.get('/api/v1/search', searchHandler);
+app.use('/api/v1/imageupload', imageuploadRouter);
+app.use('/api/v1/directories', directoryListRouter);
 
-// Sentry error handler (caso ativado)
+// Sentry error handler (se ativado)
 if (process.env.SENTRY_DSN) {
   app.use(Sentry.Handlers.errorHandler());
 }
