@@ -39,22 +39,29 @@ apiRoute.post(async (req, res) => {
       email: process.env.COMMITTER_EMAIL,
     };
 
-    let sha;
-    if (overwrite) {
-      try {
-        const getResponse = await axios.get(url, {
-          headers: {
-            Authorization: `token ${process.env.GITHUB_TOKEN}`,
-            Accept: 'application/vnd.github+json',
-          },
-        });
-        sha = getResponse.data.sha;
-      } catch (err) {
-        if (err.response && err.response.status !== 404) {
-          throw err;
-        }
+    let sha = null;
+
+    try {
+      const getResponse = await axios.get(url, {
+        headers: {
+          Authorization: `token ${process.env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github+json',
+        },
+      });
+
+      sha = getResponse.data.sha;
+
+      // Se o arquivo já existe e overwrite for false → impedir o upload
+      if (!overwrite) {
+        return res.status(409).json({ error: 'Arquivo já existe e overwrite está desabilitado.' });
       }
-    }
+
+    } catch (err) {
+      // Se o arquivo não existe, seguimos normalmente (sem SHA)
+      if (err.response?.status !== 404) {
+        throw err;
+      }
+}
 
     const payload = {
       message,

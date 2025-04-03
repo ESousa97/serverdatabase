@@ -10,14 +10,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 import db from '../models/index.js';
 const { sequelize } = db;
- // ajuste o caminho se necessário
 import logger from '../utils/logger.js';
 import * as Sentry from '@sentry/node';
 
+// Inicializa Sentry (se configurado)
 if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
+// Verificação de variáveis obrigatórias
 if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
   logger.error("JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables.");
   process.exit(1);
@@ -25,6 +26,7 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const app = express();
 
+// CORS configurado
 app.use(cors({
   origin: [
     'https://esdatabase-projmanage.vercel.app',
@@ -43,7 +45,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 
-// Configuração do CSRF
+// CSRF configurado (exceto para login)
 const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
@@ -67,7 +69,7 @@ app.get('/api/v1/ping', (req, res) => {
   res.status(200).json({ pong: true });
 });
 
-// Configuração do Swagger
+// Swagger docs
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -86,7 +88,7 @@ const options = {
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// Conexão com o banco de dados
+// Conexão com banco de dados
 (async function connectDB() {
   try {
     await sequelize.authenticate();
@@ -96,7 +98,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
   }
 })();
 
-// Importação das rotas – cada módulo DEVE exportar o router como default
+// Importação das rotas
 import authRouter from './auth/authRoutes.js';
 import cardlistRouter from './cardlist.js';
 import projectRouter from './project.js';
@@ -105,6 +107,13 @@ import searchHandler from './search.js';
 import imageuploadRouter from './imageupload.js';
 import directoryListRouter from './directorylist.js';
 
+// Novas rotas para manipulação de diretórios/arquivos
+import directoryContentRouter from './directorycontent.js';
+import deleteContentRouter from './deletecontent.js';
+import renameContentRouter from './renamecontent.js';
+import createDirectoryRouter from './create-directory.js';
+
+// Definição das rotas
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/cards', cardlistRouter);
 app.use('/api/v1/projects', projectRouter);
@@ -113,7 +122,13 @@ app.get('/api/v1/search', searchHandler);
 app.use('/api/v1/imageupload', imageuploadRouter);
 app.use('/api/v1/directories', directoryListRouter);
 
-// Sentry error handler (se ativado)
+// Novas rotas adicionadas
+app.use('/api/v1/directory-content', directoryContentRouter);
+app.use('/api/v1/delete-content', deleteContentRouter);
+app.use('/api/v1/rename-content', renameContentRouter);
+app.use('/api/v1/create-directory', createDirectoryRouter);
+
+// Handler de erro do Sentry (se habilitado)
 if (process.env.SENTRY_DSN) {
   app.use(Sentry.Handlers.errorHandler());
 }
@@ -122,10 +137,13 @@ if (process.env.SENTRY_DSN) {
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   const status = err.status || 500;
-  const message = process.env.NODE_ENV === 'production' ? 'Erro interno no servidor' : err.message;
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Erro interno no servidor'
+    : err.message;
   res.status(status).json({ message });
 });
 
+// Inicialização do servidor
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   logger.info(`Servidor rodando na porta ${PORT}`);
