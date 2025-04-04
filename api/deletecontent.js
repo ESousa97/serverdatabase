@@ -3,6 +3,9 @@ import axios from 'axios';
 
 const router = express.Router();
 
+// Defina uma variável para a base dos assets; você pode configurá-la via .env se desejar
+const basePath = process.env.GITHUB_ASSETS_BASE || 'public/assets';
+
 router.delete('/', async (req, res) => {
   const { path, type } = req.body;
 
@@ -10,11 +13,12 @@ router.delete('/', async (req, res) => {
     return res.status(400).json({ error: 'Path e type são obrigatórios.' });
   }
 
-  const url = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${path}`;
+  // Monte a URL incluindo a base de assets para que o GitHub procure em public/assets
+  const url = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${basePath}/${path}`;
 
   try {
-    // Se for pasta, buscar arquivos dentro dela
     if (type === 'dir') {
+      // Para diretórios, obtenha a lista de arquivos dentro da pasta
       const { data } = await axios.get(url, {
         headers: {
           Authorization: `token ${process.env.GITHUB_TOKEN}`,
@@ -24,8 +28,7 @@ router.delete('/', async (req, res) => {
 
       const deletePromises = data.map(async item => {
         const fileSha = item.sha;
-
-        return axios.delete(`https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${item.path}`, {
+        return axios.delete(`https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${basePath}/${item.path}`, {
           headers: {
             Authorization: `token ${process.env.GITHUB_TOKEN}`,
             Accept: 'application/vnd.github+json',
@@ -46,6 +49,7 @@ router.delete('/', async (req, res) => {
       return res.status(200).json({ message: 'Todos os arquivos da pasta foram deletados.' });
 
     } else if (type === 'file') {
+      // Para arquivos, obtenha o sha do arquivo e depois delete
       const getFile = await axios.get(url, {
         headers: {
           Authorization: `token ${process.env.GITHUB_TOKEN}`,
@@ -76,7 +80,15 @@ router.delete('/', async (req, res) => {
 
   } catch (error) {
     console.error('Erro ao deletar conteúdo:', error.message);
-    return res.status(500).json({ error: 'Erro ao deletar conteúdo', details: error.message });
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    }
+    return res.status(500).json({
+      error: 'Erro ao deletar conteúdo',
+      details: error.message,
+      github: error.response?.data || null
+    });
   }
 });
 

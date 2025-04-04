@@ -1,55 +1,63 @@
+// api/renamecontent.js
 import express from 'express';
 import axios from 'axios';
 
 const router = express.Router();
 
+const basePath = process.env.GITHUB_ASSETS_BASE || 'public/assets';
+const branch = process.env.GITHUB_BRANCH || 'main';
+
 router.put('/', async (req, res) => {
   const { oldPath, newPath } = req.body;
 
   if (!oldPath || !newPath) {
-    return res.status(400).json({ error: 'Parâmetros oldPath e newPath são obrigatórios.' });
+    return res.status(400).json({ error: 'oldPath e newPath são obrigatórios.' });
   }
 
-  try {
-    const url = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${oldPath}`;
+  // Constrói a URL completa para o arquivo antigo, incluindo o branch
+  const urlOld = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${basePath}/${oldPath}?ref=${branch}`;
 
-    // Obter conteúdo original
-    const { data } = await axios.get(url, {
+  try {
+    // Primeiro, obtenha os dados do arquivo antigo (incluindo o SHA e o conteúdo em base64)
+    const getRes = await axios.get(urlOld, {
       headers: {
         Authorization: `token ${process.env.GITHUB_TOKEN}`,
         Accept: 'application/vnd.github+json',
-      }
+      },
     });
 
-    const payload = {
-      message: `Renomeando ${oldPath} para ${newPath}`,
-      content: data.content,
-      sha: data.sha,
-      branch: process.env.GITHUB_BRANCH,
+    const { sha, content } = getRes.data;
+
+    // Constrói a URL para criar/atualizar o arquivo com o novo nome
+    const urlNew = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${basePath}/${newPath}?ref=${branch}`;
+    const commitMessage = `Renomeando arquivo de ${oldPath} para ${newPath}`;
+
+    // Cria ou atualiza o arquivo no novo caminho com o mesmo conteúdo
+    await axios.put(urlNew, {
+      message: commitMessage,
+      content, // O conteúdo em base64
+      branch,
       committer: {
         name: process.env.COMMITTER_NAME,
         email: process.env.COMMITTER_EMAIL,
       },
-    };
-
-    // Criar novo
-    await axios.put(`https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${newPath}`, payload, {
+    }, {
       headers: {
         Authorization: `token ${process.env.GITHUB_TOKEN}`,
         Accept: 'application/vnd.github+json',
       },
     });
 
-    // Deletar original
-    await axios.delete(url, {
+    // Após criar o novo arquivo, delete o antigo
+    await axios.delete(urlOld, {
       headers: {
         Authorization: `token ${process.env.GITHUB_TOKEN}`,
         Accept: 'application/vnd.github+json',
       },
       data: {
-        message: `Removendo original ${oldPath}`,
-        sha: data.sha,
-        branch: process.env.GITHUB_BRANCH,
+        message: `Removendo arquivo antigo após renomeação: ${oldPath}`,
+        sha,
+        branch,
         committer: {
           name: process.env.COMMITTER_NAME,
           email: process.env.COMMITTER_EMAIL,
@@ -57,10 +65,19 @@ router.put('/', async (req, res) => {
       },
     });
 
-    return res.status(200).json({ message: `Renomeado com sucesso para ${newPath}` });
+    return res.status(200).json({ message: 'Arquivo renomeado com sucesso.' });
+
   } catch (error) {
-    console.error('Erro ao renomear:', error.message);
-    res.status(500).json({ error: 'Erro ao renomear', details: error.message });
+    console.error('Erro ao renomear conteúdo:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    }
+    return res.status(500).json({
+      error: 'Erro ao renomear',
+      details: error.message,
+      github: error.response?.data || null,
+    });
   }
 });
 
