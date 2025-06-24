@@ -35,7 +35,7 @@ const allowedOrigins = [
   // URLs de produção
   'https://esdatabase-projmanage.vercel.app',
   'https://esdatabasev2.vercel.app',
-  'https://id-preview--69f21c81-2db1-450f-bb5d-a4d2cbdf3b34.lovable.app/',
+  'https://id-preview--69f21c81-2db1-450f-bb5d-a4d2cbdf3b34.lovable.app',
   
   // URLs de desenvolvimento local
   'http://localhost:3000',
