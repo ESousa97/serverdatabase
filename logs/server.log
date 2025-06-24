@@ -2526,3 +2526,8 @@
 2025-06-20 22:22:45 [[32minfo[39m] 📨 GET /api/v1/directories - Origin: http://localhost:8080
 2025-06-20 22:22:47 [[32minfo[39m] 📨 GET /api/v1/cards - Origin: http://localhost:8080
 2025-06-20 22:22:47 [[32minfo[39m] 📨 GET /api/v1/projects - Origin: http://localhost:8080
+2025-06-23 23:12:40 [[32minfo[39m] 🚀 Servidor rodando em 0.0.0.0:8000
+2025-06-23 23:12:40 [[32minfo[39m] 📚 Documentação: http://localhost:8000/api-docs
+2025-06-23 23:12:40 [[32minfo[39m] 🔧 Ambiente: production
+2025-06-23 23:12:40 [[32minfo[39m] 🌐 CORS configurado para: 15 origens
+2025-06-23 23:12:42 [[32minfo[39m] ✅ Conectado ao banco via Sequelize
