@@ -36,7 +36,7 @@ const allowedOrigins = [
   'https://esdatabase-projmanage.vercel.app',
   'https://esdatabasev2.vercel.app',
   'https://69f21c81-2db1-450f-bb5d-a4d2cbdf3b34.lovableproject.com',
-  'https://preview--aurora-project-view.lovable.app/',
+  'https://aurora-project-view.lovable.app',
   
   // URLs de desenvolvimento local
   'http://localhost:3000',
