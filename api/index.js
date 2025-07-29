@@ -27,32 +27,19 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 const app = express();
 
 // ========================================
-// 🔧 CONFIGURAÇÃO CORS PARA VITE
+//   CONFIGURAÇÃO CORS PARA VITE
 // ========================================
 
 // Lista de origens permitidas para desenvolvimento e produção
 const allowedOrigins = [
   // URLs de produção
-  'https://esdatabase-projmanage.vercel.app',
-  'https://esdatabasev2.vercel.app',
-  'https://69f21c81-2db1-450f-bb5d-a4d2cbdf3b34.lovableproject.com',
-  'https://aurora-project-view.lovable.app',
+  'http://adicione-aqui-sua-url-de-producao.com',
   
   // URLs de desenvolvimento local
-  'http://localhost:3000',
-  'http://localhost:5173',        // Vite padrão
-  'http://localhost:8080',        // Seu frontend
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:8080',
+  'http://adicione-aqui-sua-url-de-desenvolvimento.com',
   
   // IPs locais da rede (ajuste conforme necessário)
-  'http://192.168.1.2:8080',      // CORRIGIDO: removido http:// duplicado
-  'http://192.168.1.2:5173',
-  'http://192.168.0.2:8080',      // Caso use outra faixa de IP
-  'http://192.168.0.2:5173',
-  'http://10.0.0.2:8080',         // Para redes 10.x.x.x
-  'http://10.0.0.2:5173'
+  'http://adicione-aqui-seu-ip-local:8000',
 ];
 
 // Configuração dinâmica de CORS
@@ -69,15 +56,15 @@ const corsOptions = {
     } else {
       // Para desenvolvimento, permite qualquer localhost
       const isLocalhost = origin.includes('localhost') || 
-                         origin.includes('127.0.0.1') ||
-                         origin.includes('192.168.') ||
-                         origin.includes('10.0.0.');
+                         origin.includes('adicione-inicio-do-ip') ||
+                         origin.includes('adicione-inicio-do-ip') ||
+                         origin.includes('adicione-inicio-do-ip');
       
       if (process.env.NODE_ENV !== 'production' && isLocalhost) {
-        logger.info(`🔓 Permitindo origin de desenvolvimento: ${origin}`);
+        logger.info(`Permitindo origin de desenvolvimento: ${origin}`);
         callback(null, true);
       } else {
-        logger.warn(`❌ Origin não permitida: ${origin}`);
+        logger.warn(`Origin não permitida: ${origin}`);
         callback(new Error('Não permitido pelo CORS'), false);
       }
     }
@@ -101,7 +88,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // ========================================
-// 🛡️ CONFIGURAÇÃO DE SEGURANÇA
+//  CONFIGURAÇÃO DE SEGURANÇA
 // ========================================
 
 // Helmet configurado para desenvolvimento
@@ -115,7 +102,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ========================================
-// 🔐 CONFIGURAÇÃO CSRF
+//  CONFIGURAÇÃO CSRF
 // ========================================
 
 // CSRF configurado (com exceções)
@@ -134,12 +121,12 @@ app.use(csrfProtection);
 
 // Middleware de logging
 app.use((req, res, next) => {
-  logger.info(`📨 ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
+  logger.info(`${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
   next();
 });
 
 // ========================================
-// 🔑 ROTAS DE SISTEMA
+//   ROTAS DE SISTEMA
 // ========================================
 
 // Rota para obter token CSRF
@@ -147,7 +134,7 @@ app.get('/api/v1/csrf-token', (req, res) => {
   try {
     // Verificar se req.csrfToken está disponível
     if (typeof req.csrfToken !== 'function') {
-      logger.error('❌ CSRF middleware não inicializado corretamente');
+      logger.error('CSRF middleware não inicializado corretamente');
       return res.status(500).json({ 
         error: 'CSRF não configurado',
         message: 'Token CSRF não disponível' 
@@ -155,13 +142,13 @@ app.get('/api/v1/csrf-token', (req, res) => {
     }
     
     const token = req.csrfToken();
-    logger.info(`🔑 CSRF Token gerado: ${token.substring(0, 10)}...`);
+    logger.info(`CSRF Token gerado: ${token.substring(0, 10)}...`);
     res.json({ 
       csrfToken: token,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    logger.error('❌ Erro ao gerar CSRF token:', error);
+    logger.error('Erro ao gerar CSRF token:', error);
     res.status(500).json({ 
       error: 'Erro ao gerar token CSRF',
       message: error.message 
@@ -198,7 +185,7 @@ app.get('/api/v1/server-info', (req, res) => {
 });
 
 // ========================================
-// 📚 DOCUMENTAÇÃO SWAGGER
+//   DOCUMENTAÇÃO SWAGGER
 // ========================================
 
 const swaggerOptions = {
@@ -248,18 +235,18 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
 }));
 
 // ========================================
-// 💾 CONEXÃO COM BANCO DE DADOS
+//   CONEXÃO COM BANCO DE DADOS
 // ========================================
 
 (async function connectDB() {
   try {
     await sequelize.authenticate();
-    logger.info('✅ Conectado ao banco via Sequelize');
+    logger.info('Conectado ao banco via Sequelize');
     
     // Sincronização em desenvolvimento
     if (process.env.NODE_ENV !== 'production') {
       await sequelize.sync({ alter: true });
-      logger.info('🔄 Banco sincronizado (desenvolvimento)');
+      logger.info('Banco sincronizado (desenvolvimento)');
     }
   } catch (err) {
     logger.error(`❌ Erro ao conectar com banco: ${err.message}`);
@@ -268,7 +255,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
 })();
 
 // ========================================
-// 🛣️ IMPORTAÇÃO DAS ROTAS
+//   IMPORTAÇÃO DAS ROTAS
 // ========================================
 
 import authRouter from './auth/authRoutes.js';
@@ -286,7 +273,7 @@ import renameContentRouter from './renamecontent.js';
 import createDirectoryRouter from './create-directory.js';
 
 // ========================================
-// 📍 DEFINIÇÃO DAS ROTAS
+//   DEFINIÇÃO DAS ROTAS
 // ========================================
 
 // Rotas principais
@@ -307,7 +294,7 @@ app.use('/api/v1/rename-content', renameContentRouter);
 app.use('/api/v1/create-directory', createDirectoryRouter);
 
 // ========================================
-// 🚫 TRATAMENTO DE ERROS
+// TRATAMENTO DE ERROS
 // ========================================
 
 // Handler de erro do Sentry (se habilitado)
@@ -317,7 +304,7 @@ if (process.env.SENTRY_DSN) {
 
 // Middleware para rotas não encontradas
 app.use('*', (req, res) => {
-  logger.warn(`🔍 Rota não encontrada: ${req.method} ${req.originalUrl}`);
+  logger.warn(` Rota não encontrada: ${req.method} ${req.originalUrl}`);
   res.status(404).json({ 
     error: 'Rota não encontrada',
     method: req.method,
@@ -361,15 +348,15 @@ app.use((err, req, res, next) => {
 });
 
 // ========================================
-// 🚀 INICIALIZAÇÃO DO SERVIDOR
+// INICIALIZAÇÃO DO SERVIDOR
 // ========================================
 
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
-  logger.info(`🚀 Servidor rodando em ${HOST}:${PORT}`);
-  logger.info(`📚 Documentação: http://localhost:${PORT}/api-docs`);
-  logger.info(`🔧 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`🌐 CORS configurado para: ${allowedOrigins.length} origens`);
+  logger.info(`Servidor rodando em ${HOST}:${PORT}`);
+  logger.info(`Documentação: http://localhost:${PORT}/api-docs`);
+  logger.info(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`CORS configurado para: ${allowedOrigins.length} origens`);
 });
