@@ -14,7 +14,6 @@ Este projeto apresenta o "ES Data Base API Server", um backend abrangente desenv
 ![Sequelize](https://img.shields.io/badge/ORM-Sequelize-blue.svg?style=for-the-badge)
 ![Express.js](https://img.shields.io/badge/framework-Express.js-lightgrey.svg?style=for-the-badge)
 ![Swagger](https://img.shields.io/badge/API_Docs-Swagger-green.svg?style=for-the-badge)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-kitloong-yellow.svg?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/kitloong)
 
 <!-- Badges dependentes do link do repositório (usando placeholders) -->
 ![GitHub Issues](https://img.shields.io/github/issues/USUARIO/PROJETO?style=for-the-badge)
