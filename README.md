@@ -1022,10 +1022,6 @@ Para dúvidas, reporte de bugs, sugestões de funcionalidades ou discussões sob
     *   Este é o canal preferencial para reportar bugs e sugerir novas funcionalidades. Por favor, verifique se já existe uma issue similar antes de criar uma nova.
     *   Acesse: [URL_DO_REPOSITORIO_AQUI/issues](URL_DO_REPOSITORIO_AQUI/issues) (Substitua `URL_DO_REPOSITORIO_AQUI` pelo link real do repositório).
 
-*   **Apoiar o Projeto:**
-    *   Você pode apoiar o desenvolvimento através do link de "Buy Me A Coffee" fornecido por `kitloong` (presente no arquivo `.github/FUNDING.yml`):
-        *   [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-kitloong-yellow.svg?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/kitloong)
-
 *   **Comunidade (se aplicável):**
     *   (Se o projeto tiver um fórum, servidor Discord, Slack ou lista de e-mail, liste-os aqui.)
 
@@ -1039,7 +1035,7 @@ Agradecemos o seu interesse e feedback!
 </p>
 
 <p align="center">
-  <em>Desenvolvido com ❤️ por José Enoque Sousa - Revolucionando redes sociais através da democratização de conteúdo de qualidade com Inteligência Artificial</em>
+  <em>Desenvolvido com ❤️ por José Enoque Sousa</em>
 </p>
 
 > ✨ **Criado em:** 24 de fev. de 2025 às 20:41
