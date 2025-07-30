@@ -971,10 +971,6 @@ Este projeto é mantido e desenvolvido principalmente por:
 
 O projeto também se beneficia do apoio e das ferramentas da comunidade open-source.
 
-**Apoio ao Projeto:**
-Você pode apoiar o desenvolvimento e manutenção deste projeto ou de projetos relacionados através do link de financiamento fornecido por `kitloong` (conforme `serverdatabase-main/.github/FUNDING.yml`):
-*   [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-kitloong-yellow.svg?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/kitloong)
-
 Agradecemos a todos que dedicam seu tempo e esforço para melhorar este software!
 
 (Se houver outros contribuidores significativos ou se o autor principal tiver um perfil público como GitHub ou LinkedIn que deseje vincular, esta seção pode ser expandida.)
