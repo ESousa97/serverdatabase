@@ -947,81 +947,6 @@ O nome do projeto no `package.json` (`json-server-vercel`) e as configurações 
 
 A escolha da estratégia de deployment dependerá dos requisitos específicos do projeto, do tráfego esperado, do orçamento e da familiaridade da equipe com as diferentes tecnologias e plataformas.
 
-## 🤝 Contribuição (Nível Avançado)
-
-Agradecemos o seu interesse em contribuir para o "ES Data Base API Server"! Contribuições da comunidade são essenciais para tornar este projeto ainda melhor. Siga estas diretrizes para facilitar o processo:
-
-**1. Configurando o Ambiente de Desenvolvimento:**
-
-*   Siga o [Guia de Instalação e Configuração Avançada](#-guia-de-instalação-e-configuração-avançada) para ter o projeto rodando localmente.
-*   Certifique-se de que todas as dependências estão instaladas e que você pode executar o servidor e, idealmente, os testes (quando implementados).
-
-**2. Como Contribuir:**
-
-*   **Reportando Bugs:**
-    *   Verifique a [lista de Issues](URL_DO_REPOSITORIO_AQUI/issues) para ver se o bug já foi reportado.
-    *   Se não, abra uma nova issue, fornecendo o máximo de detalhes possível:
-        *   Passos para reproduzir o bug.
-        *   Comportamento esperado vs. comportamento atual.
-        *   Versão do Node.js, sistema operacional, e outras informações relevantes do ambiente.
-        *   Logs de erro ou screenshots, se aplicável.
-*   **Sugerindo Melhorias ou Novas Funcionalidades:**
-    *   Abra uma nova issue descrevendo a sua sugestão. Explique o problema que ela resolve ou o valor que ela adiciona.
-    *   Discuta a proposta com os mantenedores antes de começar a implementação, para alinhar as expectativas.
-*   **Trabalhando em Issues Existentes:**
-    *   Procure por issues marcadas como `help wanted` ou `good first issue`.
-    *   Comente na issue para indicar que você gostaria de trabalhar nela, para evitar duplicação de esforços.
-
-**3. Processo de Desenvolvimento e Submissão de Código:**
-
-*   **Fork & Clone:**
-    1.  Faça um **Fork** do repositório principal ([URL_DO_REPOSITORIO_AQUI](URL_DO_REPOSITORIO_AQUI)) para a sua conta do GitHub.
-    2.  Clone o seu fork localmente: `git clone https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO_FORK.git`
-    3.  Adicione o repositório original como "upstream": `git remote add upstream URL_DO_REPOSITORIO_AQUI`
-*   **Branching:**
-    *   Crie uma nova branch para cada funcionalidade ou correção de bug a partir da branch principal (ex: `main` ou `develop`):
-        ```bash
-        git checkout -b tipo/nome-descritivo-da-feature-ou-bugfix
-        ```
-        Exemplos: `feature/user-roles`, `fix/login-csrf-issue`.
-    *   Mantenha sua branch principal local sincronizada com o upstream: `git pull upstream main`.
-*   **Desenvolvimento:**
-    *   Escreva código claro, conciso e bem comentado.
-    *   Siga o estilo de código existente no projeto. (Idealmente, configure linters como ESLint e formatadores como Prettier para ajudar nisso).
-    *   **Escreva Testes:** Adicione testes unitários e/ou de integração para cobrir as suas alterações.
-*   **Commits:**
-    *   Faça commits pequenos e lógicos.
-    *   Escreva mensagens de commit claras e descritivas. Sugerimos o padrão [Conventional Commits](https://www.conventionalcommits.org/):
-        ```
-        <tipo>[escopo opcional]: <descrição>
-
-        [corpo opcional]
-
-        [rodapé opcional]
-        ```
-        Exemplos: `feat: Adicionar endpoint para buscar projetos por categoria`, `fix(auth): Corrigir validação de refresh token expirado`.
-*   **Pull Request (PR):**
-    1.  Faça push da sua branch para o seu fork no GitHub: `git push origin tipo/nome-descritivo-da-feature-ou-bugfix`
-    2.  Abra um Pull Request do seu fork para a branch principal do repositório original.
-    3.  No PR, descreva claramente as alterações que você fez e por quê. Se o PR resolve uma issue existente, mencione-a (ex: `Closes #123`).
-    4.  Certifique-se de que todos os testes (se houver CI configurada) estão passando.
-    5.  Esteja preparado para discussões e revisões do seu código. Os mantenedores podem solicitar alterações.
-
-**4. Guia de Estilo de Código:**
-
-*   (Esta seção seria preenchida se o projeto tivesse um guia de estilo definido ou usasse linters/formatters configurados).
-*   Por enquanto, tente manter a consistência com o código existente.
-*   Use `type: "module"` e imports/exports ES6, conforme visto na maior parte do projeto.
-
-**5. Code Review:**
-
-*   Todos os PRs passarão por um processo de revisão de código. Seja receptivo a feedback e esteja disposto a iterar sobre suas alterações.
-*   O objetivo da revisão é garantir a qualidade, consistência e corretude do código.
-
-Ao contribuir, você concorda que suas contribuições serão licenciadas sob a mesma [Licença MIT](#-licença-e-aspectos-legais) que cobre o projeto.
-
-Agradecemos antecipadamente por suas contribuições!
-
 ## 📜 Licença e Aspectos Legais
 
 O "ES Data Base API Server" é distribuído sob os termos da **MIT License**.
@@ -1053,81 +978,6 @@ Você pode apoiar o desenvolvimento e manutenção deste projeto ou de projetos 
 Agradecemos a todos que dedicam seu tempo e esforço para melhorar este software!
 
 (Se houver outros contribuidores significativos ou se o autor principal tiver um perfil público como GitHub ou LinkedIn que deseje vincular, esta seção pode ser expandida.)
-
-## 🗺️ Roadmap Detalhado e Visão de Longo Prazo
-
-O "ES Data Base API Server" já oferece uma base funcional robusta. No entanto, há diversas áreas para aprimoramento e expansão futura, visando torná-lo uma solução ainda mais completa e refinada.
-
-**Curto Prazo (Próximos 3-6 meses):**
-
-1.  **🧪 Implementação de Suíte de Testes Abrangente:**
-    *   **Objetivo:** Aumentar a confiabilidade e facilitar refatorações seguras.
-    *   **Ações:**
-        *   Configurar Jest (ou Mocha/Chai) e Supertest.
-        *   Desenvolver testes unitários para `services/authService.js` e lógica crítica nos controladores.
-        *   Criar testes de integração para os principais fluxos da API (autenticação, CRUD de projetos/cards, upload de imagem).
-        *   Configurar relatórios de cobertura de código.
-2.  **💅 Melhorias na Qualidade de Código e Developer Experience:**
-    *   **Objetivo:** Padronizar o código e facilitar a contribuição.
-    *   **Ações:**
-        *   Configurar ESLint com um conjunto de regras (ex: `eslint-config-airbnb-base`) e Prettier para formatação automática.
-        *   Adicionar scripts `lint` e `format` ao `package.json`.
-        *   Refatorar inconsistências (ex: uso de `require` em `authMiddleware.js` em um projeto `type: "module"`).
-3.  **🛡️ Reforço na Autenticação e Autorização de Rotas:**
-    *   **Objetivo:** Garantir que todos os endpoints sensíveis estejam devidamente protegidos.
-    *   **Ações:**
-        *   Revisar e aplicar consistentemente um middleware de autenticação JWT (como o `authMiddleware.js`, adaptado para ES Modules) às rotas que manipulam dados (projetos, cards, assets).
-        *   Considerar a implementação de um sistema básico de roles/permissões (ex: admin, usuário).
-4.  **📄 Documentação Aprimorada:**
-    *   **Objetivo:** Melhorar a clareza e completude da documentação.
-    *   **Ações:**
-        *   Revisar e expandir os comentários JSDoc para Swagger, garantindo que todos os parâmetros e respostas estejam bem documentados.
-        *   Criar um arquivo `.env.example` detalhado.
-
-**Médio Prazo (Próximos 6-12 meses):**
-
-1.  **🚀 Otimizações de Performance:**
-    *   **Objetivo:** Melhorar a velocidade de resposta e a eficiência do servidor.
-    *   **Ações:**
-        *   Analisar e otimizar queries de banco de dados complexas.
-        *   Implementar caching para dados frequentemente acessados e raramente modificados (ex: lista de categorias, projetos públicos). Poderia reintroduzir o Redis ou usar caching em memória com TTL.
-        *   Avaliar o desempenho do gerenciamento de assets via GitHub API sob carga e otimizar se necessário (ex: upload em background, caching de URLs).
-2.  **📦 Funcionalidades Adicionais para Entidades:**
-    *   **Objetivo:** Expandir as capacidades de gerenciamento de dados.
-    *   **Ações:**
-        *   Adicionar paginação e filtros mais avançados para listagem de projetos e cards.
-        *   Implementar relacionamentos mais complexos entre entidades (ex: projetos podem ter múltiplos cards, usuários podem ser proprietários de projetos).
-3.  **🔧 Melhorias no Gerenciamento de Assets:**
-    *   **Objetivo:** Tornar o sistema de assets mais robusto e flexível.
-    *   **Ações:**
-        *   Suporte para outros tipos de arquivos além de imagens.
-        *   Metadados para assets (descrição, tags).
-        *   Opções de otimização de imagem no upload (compressão, redimensionamento).
-4.  **⚙️ Configuração de CI/CD:**
-    *   **Objetivo:** Automatizar o processo de teste e build.
-    *   **Ações:**
-        *   Configurar GitHub Actions (ou outra plataforma de CI) para executar testes e linters a cada push/PR.
-        *   Potencialmente, automatizar o build de imagens Docker.
-
-**Longo Prazo e Visão Futura:**
-
-1.  **🌐 Suporte a Internacionalização (i18n):**
-    *   Permitir que mensagens de erro e, potencialmente, conteúdo sejam servidos em múltiplos idiomas.
-2.  **🔌 Arquitetura de Plugins/Extensões:**
-    *   Explorar a possibilidade de tornar o sistema mais extensível, permitindo que novas funcionalidades ou integrações sejam adicionadas como plugins.
-3.  **📊 Analytics e Monitoramento Avançado:**
-    *   Integrar ferramentas para coletar métricas de uso da API e performance do sistema de forma mais detalhada.
-4.  **👥 Funcionalidades de Colaboração e Multi-usuário Avançadas:**
-    *   Se o escopo do projeto evoluir para uma plataforma multi-tenant ou colaborativa, implementar funcionalidades como compartilhamento de projetos, permissões granulares, etc.
-5.  **💡 Exploração de Alternativas para Armazenamento de Assets:**
-    *   Manter a opção do GitHub, mas também oferecer integração com provedores de storage dedicados (AWS S3, Google Cloud Storage) como alternativa para casos de uso de alta demanda.
-
-**Desafios Antecipados:**
-*   Manter a simplicidade da base de código enquanto adiciona novas funcionalidades.
-*   Gerenciar a escalabilidade do sistema de assets via GitHub API sob uso intenso.
-*   Garantir a segurança contínua à medida que o sistema evolui.
-
-A visão de longo prazo é que o "ES Data Base API Server" se torne uma solução de backend altamente confiável, flexível e fácil de usar para uma ampla gama de aplicações, com uma comunidade ativa de contribuidores e usuários.
 
 ## ❓ FAQ (Perguntas Frequentes)
 
@@ -1182,3 +1032,14 @@ Para dúvidas, reporte de bugs, sugestões de funcionalidades ou discussões sob
 Ao reportar um problema, por favor, forneça o máximo de detalhes possível, incluindo passos para reproduzir o erro, mensagens de erro exatas, e informações sobre o seu ambiente (versão do Node.js, sistema operacional, etc.). Isso nos ajudará a diagnosticar e resolver o problema mais rapidamente.
 
 Agradecemos o seu interesse e feedback!
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/ESousa97/Instabytes-Front-End-Imersao-Alura-Google?style=social" alt="GitHub Stars">
+  <img src="https://img.shields.io/github/forks/ESousa97/Instabytes-Front-End-Imersao-Alura-Google?style=social" alt="GitHub Forks">
+</p>
+
+<p align="center">
+  <em>Desenvolvido com ❤️ por José Enoque Sousa - Revolucionando redes sociais através da democratização de conteúdo de qualidade com Inteligência Artificial</em>
+</p>
+
+> ✨ **Criado em:** 24 de fev. de 2025 às 20:41
