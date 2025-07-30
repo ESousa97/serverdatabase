@@ -42,8 +42,6 @@ Este projeto apresenta o "ES Data Base API Server", um backend abrangente desenv
 *   [🚢 Deployment Detalhado e Escalabilidade](#-deployment-detalhado-e-escalabilidade)
 *   [🤝 Contribuição (Nível Avançado)](#-contribuição-nível-avançado)
 *   [📜 Licença e Aspectos Legais](#-licença-e-aspectos-legais)
-*   [👥 Equipe Principal e Colaboradores Chave](#-equipe-principal-e-colaboradores-chave)
-*   [🗺️ Roadmap Detalhado e Visão de Longo Prazo](#️-roadmap-detalhado-e-visão-de-longo-prazo)
 *   [❓ FAQ (Perguntas Frequentes)](#-faq-perguntas-frequentes)
 *   [📞 Contato e Suporte](#-contato-e-suporte)
 
