@@ -962,18 +962,6 @@ Você pode encontrar o texto completo da licença no arquivo [LICENSE](LICENSE) 
 
 Ao usar, contribuir ou distribuir este software, você concorda em cumprir os termos desta licença.
 
-## 👥 Equipe Principal e Colaboradores Chave
-
-Este projeto é mantido e desenvolvido principalmente por:
-
-*   **ES Data Base** (Conforme indicado no arquivo `LICENSE`).
-
-O projeto também se beneficia do apoio e das ferramentas da comunidade open-source.
-
-Agradecemos a todos que dedicam seu tempo e esforço para melhorar este software!
-
-(Se houver outros contribuidores significativos ou se o autor principal tiver um perfil público como GitHub ou LinkedIn que deseje vincular, esta seção pode ser expandida.)
-
 ## ❓ FAQ (Perguntas Frequentes)
 
 1.  **P: Como devo gerar e configurar o `GITHUB_TOKEN` para o gerenciamento de assets?**
