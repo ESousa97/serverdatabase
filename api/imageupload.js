@@ -8,8 +8,19 @@ const router = express.Router();
 // Configura o multer para armazenar o arquivo na memória
 const upload = multer({ storage: multer.memoryStorage() });
 
+// Multer error handling middleware
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ error: `Erro no upload: ${err.message}` });
+  }
+  if (err) {
+    return res.status(500).json({ error: `Erro no servidor: ${err.message}` });
+  }
+  next();
+};
+
 // POST endpoint for image upload
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('image'), handleMulterError, async (req, res) => {
   try {
     const { directory, overwrite } = req.body;
     const file = req.file;
@@ -79,11 +90,6 @@ router.post('/', upload.single('image'), async (req, res) => {
     console.error('Erro no upload:', error);
     res.status(500).json({ error: error.message });
   }
-});
-
-// Error handling middleware for unsupported methods
-router.all('/', (req, res) => {
-  res.status(405).json({ error: `Método ${req.method} não permitido` });
 });
 
 export default router;
