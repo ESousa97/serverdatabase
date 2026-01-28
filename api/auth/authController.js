@@ -10,13 +10,17 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({ accessToken });
   } catch (err) {
     logger.error(`Erro no login: ${err.message}`);
-    res.status(err.message === 'Credenciais inválidas' ? 401 : 500)
-       .json({ message: err.message === 'Credenciais inválidas' ? 'Credenciais inválidas' : 'Erro interno no servidor' });
+    res.status(err.message === 'Credenciais inválidas' ? 401 : 500).json({
+      message:
+        err.message === 'Credenciais inválidas'
+          ? 'Credenciais inválidas'
+          : 'Erro interno no servidor',
+    });
   }
 };
 
@@ -26,7 +30,7 @@ export const refresh = async (req, res) => {
     if (!token) return res.sendStatus(401);
     const newAccessToken = await authService.refresh(token);
     res.json({ accessToken: newAccessToken });
-  } catch (err) {
+  } catch {
     res.sendStatus(403);
   }
 };

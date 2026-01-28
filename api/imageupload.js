@@ -1,94 +1,72 @@
-// pages/api/imageupload.js
-import nextConnect from 'next-connect';
+// api/imageupload.js
+import express from 'express';
 import multer from 'multer';
-import axios from 'axios';
+import { getFileInfo, createOrUpdateFile } from '../utils/github-client.js';
+import logger from '../utils/logger.js';
+
+const router = express.Router();
 
 // Configura o multer para armazenar o arquivo na memória
-const upload = multer({ storage: multer.memoryStorage() });
-
-const apiRoute = nextConnect({
-  onError(error, req, res) {
-    res.status(500).json({ error: `Erro no servidor: ${error.message}` });
-  },
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Método ${req.method} não permitido` });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB máximo
   },
 });
 
-// Processa o campo "image" enviado no form
-apiRoute.use(upload.single('image'));
-
-apiRoute.post(async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { directory, overwrite } = req.body;
     const file = req.file;
+
     if (!file) {
       return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
     }
 
-    const uploadPath = process.env.GITHUB_UPLOAD_PATH || 'public/assets';
     const dir = directory || 'default';
-    const filePath = `${uploadPath}/${dir}/${file.originalname}`;
+    const filePath = `${dir}/${file.originalname}`;
     const contentBase64 = file.buffer.toString('base64');
-    const url = `https://api.github.com/repos/${process.env.GITHUB_REPO}/contents/${filePath}`;
-    const message = overwrite
-      ? `Atualizando arquivo ${file.originalname}`
-      : `Adicionando arquivo ${file.originalname}`;
-    const committer = {
-      name: process.env.COMMITTER_NAME,
-      email: process.env.COMMITTER_EMAIL,
-    };
+    const shouldOverwrite = overwrite === 'true' || overwrite === true;
 
     let sha = null;
 
     try {
-      const getResponse = await axios.get(url, {
-        headers: {
-          Authorization: `token ${process.env.GITHUB_TOKEN}`,
-          Accept: 'application/vnd.github+json',
-        },
-      });
-
-      sha = getResponse.data.sha;
+      const existingFile = await getFileInfo(filePath);
+      sha = existingFile.sha;
 
       // Se o arquivo já existe e overwrite for false → impedir o upload
-      if (!overwrite) {
-        return res.status(409).json({ error: 'Arquivo já existe e overwrite está desabilitado.' });
+      if (!shouldOverwrite) {
+        return res.status(409).json({
+          error: 'Arquivo já existe e overwrite está desabilitado.',
+          existingFile: existingFile.download_url,
+        });
       }
-
-    } catch (err) {
-      // Se o arquivo não existe, seguimos normalmente (sem SHA)
-      if (err.response?.status !== 404) {
-        throw err;
+    } catch (error) {
+      // Se o arquivo não existe (404), seguimos normalmente (sem SHA)
+      if (error.response?.status !== 404) {
+        throw error;
       }
-}
+    }
 
-    const payload = {
-      message,
-      committer,
+    const message = sha
+      ? `Atualizando arquivo ${file.originalname}`
+      : `Adicionando arquivo ${file.originalname}`;
+
+    const result = await createOrUpdateFile({
+      path: filePath,
       content: contentBase64,
-      branch: process.env.GITHUB_BRANCH,
-    };
-    if (sha) payload.sha = sha;
-
-    const response = await axios.put(url, payload, {
-      headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-      },
+      message,
+      sha,
     });
 
-    res.status(200).json({ imageUrl: response.data.content.download_url });
+    res.status(200).json({
+      message: sha ? 'Arquivo atualizado com sucesso' : 'Arquivo criado com sucesso',
+      imageUrl: result.content.download_url,
+    });
   } catch (error) {
-    console.error('Erro no upload:', error);
-    res.status(500).json({ error: error.message });
+    logger.error('Erro no upload:', error);
+    res.status(500).json({ error: 'Erro no upload', details: error.message });
   }
 });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-export default apiRoute;
+export default router;

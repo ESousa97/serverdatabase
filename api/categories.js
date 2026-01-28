@@ -1,19 +1,18 @@
+// api/categories.js
+import asyncHandler from 'express-async-handler';
 import db from '../models/index.js';
-const { Project, Sequelize } = db;
+import logger from '../utils/logger.js';
 
-async function handler(req, res) {
-  if (req.method === 'OPTIONS') return res.status(200).end();
+const { Project } = db;
 
-  try {
-    const categories = await Project.findAll({
-      attributes: ['id', 'titulo', 'categoria'],
-      order: [['id', 'DESC']]
-    });
-    res.status(200).json(categories);    
-  } catch (error) {
-    console.error('Erro ao buscar dados das categorias:', error);
-    res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
-  }
-}
+const handler = asyncHandler(async (req, res) => {
+  const categories = await Project.findAll({
+    attributes: ['id', 'titulo', 'categoria'],
+    order: [['id', 'DESC']],
+  });
+
+  logger.debug(`Categorias listadas: ${categories.length} projetos`);
+  res.status(200).json(categories);
+});
 
 export default handler;

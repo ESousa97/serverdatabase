@@ -1,81 +1,98 @@
 // api/cardlist.js
 import express from 'express';
+import asyncHandler from 'express-async-handler';
+import { body } from 'express-validator';
 import db from '../models/index.js';
-const { Card } = db;
+import { validate } from '../middleware/validate.js';
+import logger from '../utils/logger.js';
 
+const { Card } = db;
 const router = express.Router();
 
+// Validação para dados do card
+const validateCard = [
+  body('titulo').notEmpty().withMessage('Título é obrigatório'),
+  body('descricao').optional().isString(),
+  body('imageurl').optional().isString(),
+  validate,
+];
+
 // Listar todos os cards
-router.get('/', async (req, res) => {
-  try {
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
     const cards = await Card.findAll();
     res.status(200).json(cards);
-  } catch (error) {
-    console.error('Erro ao listar cards:', error);
-    res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
-  }
-});
+  })
+);
 
 // Buscar um card por ID
-router.get('/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
+router.get(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
     const card = await Card.findOne({ where: { id } });
-    if (!card) return res.status(404).json({ message: 'Card não encontrado' });
+
+    if (!card) {
+      return res.status(404).json({ message: 'Card não encontrado' });
+    }
+
     res.status(200).json(card);
-  } catch (error) {
-    console.error('Erro ao buscar card:', error);
-    res.status(500).json({ message: 'Erro ao consultar o banco de dados', error: error.message });
-  }
-});
+  })
+);
 
 // Criar um novo card
-router.post('/', async (req, res) => {
-  try {
+router.post(
+  '/',
+  validateCard,
+  asyncHandler(async (req, res) => {
     const { titulo, descricao, imageurl } = req.body;
     const newCard = await Card.create({ titulo, descricao, imageurl });
+    logger.info(`Card criado: ${newCard.id}`);
     res.status(201).json(newCard);
-  } catch (error) {
-    console.error('Erro ao criar card:', error);
-    res.status(500).json({ message: 'Erro ao criar card', error: error.message });
-  }
-});
+  })
+);
 
 // Atualizar um card existente
-router.put('/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
+router.put(
+  '/:id',
+  validateCard,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
     const { titulo, descricao, imageurl } = req.body;
     const card = await Card.findOne({ where: { id } });
-    if (!card) return res.status(404).json({ message: 'Card não encontrado' });
-    
+
+    if (!card) {
+      return res.status(404).json({ message: 'Card não encontrado' });
+    }
+
     await card.update({
       titulo,
       descricao,
       imageurl,
-      data_modificacao: new Date() // Atualiza a data de modificação
+      data_modificacao: new Date(),
     });
-    
+
+    logger.info(`Card atualizado: ${id}`);
     res.status(200).json(card);
-  } catch (error) {
-    console.error('Erro ao atualizar card:', error);
-    res.status(500).json({ message: 'Erro ao atualizar card', error: error.message });
-  }
-});
+  })
+);
 
 // Deletar um card
-router.delete('/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
+router.delete(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
     const card = await Card.findOne({ where: { id } });
-    if (!card) return res.status(404).json({ message: 'Card não encontrado' });
-    
+
+    if (!card) {
+      return res.status(404).json({ message: 'Card não encontrado' });
+    }
+
     await card.destroy();
+    logger.info(`Card deletado: ${id}`);
     res.status(200).json({ message: 'Card deletado com sucesso' });
-  } catch (error) {
-    console.error('Erro ao deletar card:', error);
-    res.status(500).json({ message: 'Erro ao deletar card', error: error.message });
-  }
-});
+  })
+);
 
 export default router;
