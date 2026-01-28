@@ -89,7 +89,7 @@ app.use(cors(corsOptions));
 
 app.use(
   helmet({
-    crossOriginEmbedderPolicy: false,
+    // Rely on Helmet's default Content Security Policy configuration
   })
 );
 
