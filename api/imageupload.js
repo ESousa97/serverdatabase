@@ -1,27 +1,19 @@
-// pages/api/imageupload.js
-import nextConnect from 'next-connect';
+// api/imageupload.js
+import express from 'express';
 import multer from 'multer';
 import axios from 'axios';
+
+const router = express.Router();
 
 // Configura o multer para armazenar o arquivo na memória
 const upload = multer({ storage: multer.memoryStorage() });
 
-const apiRoute = nextConnect({
-  onError(error, req, res) {
-    res.status(500).json({ error: `Erro no servidor: ${error.message}` });
-  },
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Método ${req.method} não permitido` });
-  },
-});
-
-// Processa o campo "image" enviado no form
-apiRoute.use(upload.single('image'));
-
-apiRoute.post(async (req, res) => {
+// POST endpoint for image upload
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { directory, overwrite } = req.body;
     const file = req.file;
+    
     if (!file) {
       return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
     }
@@ -53,15 +45,16 @@ apiRoute.post(async (req, res) => {
 
       // Se o arquivo já existe e overwrite for false → impedir o upload
       if (!overwrite) {
-        return res.status(409).json({ error: 'Arquivo já existe e overwrite está desabilitado.' });
+        return res
+          .status(409)
+          .json({ error: 'Arquivo já existe e overwrite está desabilitado.' });
       }
-
     } catch (err) {
       // Se o arquivo não existe, seguimos normalmente (sem SHA)
       if (err.response?.status !== 404) {
         throw err;
       }
-}
+    }
 
     const payload = {
       message,
@@ -69,7 +62,10 @@ apiRoute.post(async (req, res) => {
       content: contentBase64,
       branch: process.env.GITHUB_BRANCH,
     };
-    if (sha) payload.sha = sha;
+    
+    if (sha) {
+      payload.sha = sha;
+    }
 
     const response = await axios.put(url, payload, {
       headers: {
@@ -85,10 +81,9 @@ apiRoute.post(async (req, res) => {
   }
 });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Error handling middleware for unsupported methods
+router.all('/', (req, res) => {
+  res.status(405).json({ error: `Método ${req.method} não permitido` });
+});
 
-export default apiRoute;
+export default router;
