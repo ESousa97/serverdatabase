@@ -3,6 +3,8 @@ import express from 'express';
 import { body } from 'express-validator';
 import asyncHandler from 'express-async-handler';
 import db from '../models/index.js';
+import { validate } from '../middleware/validate.js';
+import logger from '../utils/logger.js';
 
 const { Project } = db;
 const router = express.Router();
@@ -12,7 +14,8 @@ const validateProject = [
   body('titulo').notEmpty().withMessage('Título é obrigatório'),
   body('descricao').optional().isString(),
   body('conteudo').optional().isString(),
-  body('categoria').optional().isString()
+  body('categoria').optional().isString(),
+  validate,
 ];
 
 // Listar todos os projetos
@@ -29,8 +32,11 @@ router.get(
   '/:id',
   asyncHandler(async (req, res) => {
     const project = await Project.findOne({ where: { id: req.params.id } });
-    if (!project)
+
+    if (!project) {
       return res.status(404).json({ message: 'Projeto não encontrado' });
+    }
+
     res.status(200).json(project);
   })
 );
@@ -42,6 +48,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { titulo, descricao, conteudo, categoria } = req.body;
     const newProject = await Project.create({ titulo, descricao, conteudo, categoria });
+    logger.info(`Projeto criado: ${newProject.id}`);
     res.status(201).json(newProject);
   })
 );
@@ -53,15 +60,20 @@ router.put(
   asyncHandler(async (req, res) => {
     const { titulo, descricao, conteudo, categoria } = req.body;
     const project = await Project.findOne({ where: { id: req.params.id } });
-    if (!project)
+
+    if (!project) {
       return res.status(404).json({ message: 'Projeto não encontrado' });
+    }
+
     await project.update({
       titulo,
       descricao,
       conteudo,
       categoria,
-      data_modificacao: new Date()
+      data_modificacao: new Date(),
     });
+
+    logger.info(`Projeto atualizado: ${req.params.id}`);
     res.status(200).json(project);
   })
 );
@@ -71,9 +83,13 @@ router.delete(
   '/:id',
   asyncHandler(async (req, res) => {
     const project = await Project.findOne({ where: { id: req.params.id } });
-    if (!project)
+
+    if (!project) {
       return res.status(404).json({ message: 'Projeto não encontrado' });
+    }
+
     await project.destroy();
+    logger.info(`Projeto deletado: ${req.params.id}`);
     res.status(200).json({ message: 'Projeto deletado com sucesso' });
   })
 );

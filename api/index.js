@@ -3,14 +3,15 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import csrf from 'csurf';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import dotenv from 'dotenv';
 dotenv.config();
+
 import db from '../models/index.js';
 const { sequelize } = db;
 import logger from '../utils/logger.js';
+import { errorHandler, notFoundHandler } from '../middleware/error-handler.js';
 import * as Sentry from '@sentry/node';
 
 // Inicializa Sentry (se configurado)
@@ -19,109 +20,91 @@ if (process.env.SENTRY_DSN) {
 }
 
 // Verificação de variáveis obrigatórias
-if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-  logger.error("JWT_SECRET and JWT_REFRESH_SECRET must be defined in environment variables.");
+const requiredEnvVars = ['JWT_SECRET', 'JWT_REFRESH_SECRET'];
+const missingVars = requiredEnvVars.filter((v) => !process.env[v]);
+
+if (missingVars.length > 0) {
+  logger.error(`Variáveis de ambiente obrigatórias não definidas: ${missingVars.join(', ')}`);
   process.exit(1);
 }
 
 const app = express();
 
 // ========================================
-//   CONFIGURAÇÃO CORS PARA VITE
+//   CONFIGURAÇÃO CORS
 // ========================================
 
-// Lista de origens permitidas para desenvolvimento e produção
-const allowedOrigins = [
-  // URLs de produção
-  'http://adicione-aqui-sua-url-de-producao.com',
-  
-  // URLs de desenvolvimento local
-  'http://adicione-aqui-sua-url-de-desenvolvimento.com',
-  
-  // IPs locais da rede (ajuste conforme necessário)
-  'http://adicione-aqui-seu-ip-local:8000',
-];
+// Lista de origens permitidas (via variável de ambiente)
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // Configuração dinâmica de CORS
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin(origin, callback) {
     // Permite requisições sem origin (Postman, mobile apps, etc.)
     if (!origin) {
       return callback(null, true);
     }
-    
+
     // Verifica se a origin está na lista permitida
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // Para desenvolvimento, permite qualquer localhost
-      const isLocalhost = origin.includes('localhost') || 
-                         origin.includes('adicione-inicio-do-ip') ||
-                         origin.includes('adicione-inicio-do-ip') ||
-                         origin.includes('adicione-inicio-do-ip');
-      
-      if (process.env.NODE_ENV !== 'production' && isLocalhost) {
-        logger.info(`Permitindo origin de desenvolvimento: ${origin}`);
-        callback(null, true);
-      } else {
-        logger.warn(`Origin não permitida: ${origin}`);
-        callback(new Error('Não permitido pelo CORS'), false);
-      }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
+
+    // Para desenvolvimento, permite localhost e IPs locais
+    const isLocalDev =
+      origin.includes('localhost') ||
+      origin.match(/^http:\/\/192\.168\.\d+\.\d+/) ||
+      origin.match(/^http:\/\/10\.\d+\.\d+\.\d+/) ||
+      origin.match(/^http:\/\/172\.(1[6-9]|2\d|3[01])\.\d+\.\d+/);
+
+    if (process.env.NODE_ENV !== 'production' && isLocalDev) {
+      logger.debug(`Permitindo origin de desenvolvimento: ${origin}`);
+      return callback(null, true);
+    }
+
+    logger.warn(`Origin não permitida pelo CORS: ${origin}`);
+    callback(new Error('Não permitido pelo CORS'), false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'X-CSRF-Token', 
-    'X-XSRF-TOKEN',
-    'Accept',
-    'Origin',
-    'X-Requested-With'
-  ],
-  exposedHeaders: ['X-CSRF-Token', 'Set-Cookie'],
-  optionsSuccessStatus: 200, // Para suporte a navegadores legados
-  preflightContinue: false
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'],
+  optionsSuccessStatus: 200,
+  preflightContinue: false,
 };
 
 app.use(cors(corsOptions));
 
 // ========================================
-//  CONFIGURAÇÃO DE SEGURANÇA
+//   CONFIGURAÇÃO DE SEGURANÇA
 // ========================================
 
-// Helmet configurado para desenvolvimento
-app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
-  crossOriginEmbedderPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ========================================
-//  CONFIGURAÇÃO CSRF
+//   MIDDLEWARE DE LOGGING
 // ========================================
 
-// CSRF configurado (com exceções)
-const csrfProtection = csrf({
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    maxAge: 3600000 // 1 hora
-  },
-  ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
-});
-
-// Aplicar CSRF globalmente primeiro
-app.use(csrfProtection);
-
-// Middleware de logging
 app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.info(`${req.method} ${req.path} ${res.statusCode} - ${duration}ms`);
+  });
+
   next();
 });
 
@@ -129,58 +112,47 @@ app.use((req, res, next) => {
 //   ROTAS DE SISTEMA
 // ========================================
 
-// Rota para obter token CSRF
-app.get('/api/v1/csrf-token', (req, res) => {
+// Health check básico
+app.get('/api/v1/ping', (req, res) => {
+  res.status(200).json({
+    pong: true,
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+  });
+});
+
+// Health check com verificação de DB
+app.get('/api/v1/health', async (req, res) => {
   try {
-    // Verificar se req.csrfToken está disponível
-    if (typeof req.csrfToken !== 'function') {
-      logger.error('CSRF middleware não inicializado corretamente');
-      return res.status(500).json({ 
-        error: 'CSRF não configurado',
-        message: 'Token CSRF não disponível' 
-      });
-    }
-    
-    const token = req.csrfToken();
-    logger.info(`CSRF Token gerado: ${token.substring(0, 10)}...`);
-    res.json({ 
-      csrfToken: token,
-      timestamp: new Date().toISOString()
+    await sequelize.authenticate();
+    res.status(200).json({
+      status: 'healthy',
+      database: 'connected',
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Erro ao gerar CSRF token:', error);
-    res.status(500).json({ 
-      error: 'Erro ao gerar token CSRF',
-      message: error.message 
+    logger.error('Health check failed:', error.message);
+    res.status(503).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString(),
     });
   }
 });
 
-// Rota de health check
-app.get('/api/v1/ping', (req, res) => {
-  res.status(200).json({ 
-    pong: true, 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
-
-// Rota para informações do servidor (desenvolvimento)
+// Informações do servidor (desenvolvimento apenas)
 app.get('/api/v1/server-info', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     return res.status(404).json({ message: 'Not found' });
   }
-  
+
   res.json({
-    server: 'Projmanage API',
+    server: 'ES Data Base API',
     version: '1.0.0',
     node: process.version,
-    environment: process.env.NODE_ENV,
-    cors: {
-      allowedOrigins: allowedOrigins,
-      currentOrigin: req.get('Origin')
-    },
-    timestamp: new Date().toISOString()
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -192,47 +164,44 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Projmanage API',
+      title: 'ES Data Base API',
       version: '1.0.0',
-      description: 'API para gerenciamento de projetos e cards',
-      contact: {
-        name: 'Suporte API',
-        email: 'suporte@projmanage.com'
-      }
+      description: 'API para gerenciamento de projetos, cards e assets',
+      license: {
+        name: 'MIT',
+        url: 'https://opensource.org/licenses/MIT',
+      },
     },
     servers: [
-      { 
+      {
         url: process.env.BASE_URL || 'http://localhost:8000/api/v1',
-        description: 'Servidor de desenvolvimento'
-      }
+        description: process.env.NODE_ENV === 'production' ? 'Produção' : 'Desenvolvimento',
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT'
+          bearerFormat: 'JWT',
         },
-        csrfToken: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'X-CSRF-Token'
-        }
-      }
+      },
     },
-    security: [
-      { bearerAuth: [] },
-      { csrfToken: [] }
-    ]
+    security: [{ bearerAuth: [] }],
   },
-  apis: ['./api/*.js', './api/auth/*.js']
+  apis: ['./api/*.js', './api/auth/*.js'],
 };
 
 const swaggerSpecs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'Projmanage API Docs'
-}));
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpecs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'ES Data Base API Docs',
+  })
+);
 
 // ========================================
 //   CONEXÃO COM BANCO DE DADOS
@@ -241,15 +210,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
 (async function connectDB() {
   try {
     await sequelize.authenticate();
-    logger.info('Conectado ao banco via Sequelize');
-    
+    logger.info('Conectado ao banco de dados via Sequelize');
+
     // Sincronização em desenvolvimento
     if (process.env.NODE_ENV !== 'production') {
       await sequelize.sync({ alter: true });
-      logger.info('Banco sincronizado (desenvolvimento)');
+      logger.info('Banco de dados sincronizado (desenvolvimento)');
     }
   } catch (err) {
-    logger.error(`❌ Erro ao conectar com banco: ${err.message}`);
+    logger.error(`Erro ao conectar com banco de dados: ${err.message}`);
     process.exit(1);
   }
 })();
@@ -294,7 +263,7 @@ app.use('/api/v1/rename-content', renameContentRouter);
 app.use('/api/v1/create-directory', createDirectoryRouter);
 
 // ========================================
-// TRATAMENTO DE ERROS
+//   TRATAMENTO DE ERROS
 // ========================================
 
 // Handler de erro do Sentry (se habilitado)
@@ -303,52 +272,13 @@ if (process.env.SENTRY_DSN) {
 }
 
 // Middleware para rotas não encontradas
-app.use('*', (req, res) => {
-  logger.warn(` Rota não encontrada: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ 
-    error: 'Rota não encontrada',
-    method: req.method,
-    path: req.originalUrl,
-    timestamp: new Date().toISOString()
-  });
-});
+app.use('*', notFoundHandler);
 
 // Middleware global de tratamento de erros
-app.use((err, req, res, next) => {
-  logger.error(`💥 Erro na aplicação: ${err.stack}`);
-  
-  // Erro de CORS
-  if (err.message.includes('CORS')) {
-    return res.status(403).json({
-      error: 'Erro de CORS',
-      message: 'Origin não permitida',
-      origin: req.get('Origin')
-    });
-  }
-  
-  // Erro de CSRF
-  if (err.code === 'EBADCSRFTOKEN') {
-    return res.status(403).json({
-      error: 'Token CSRF inválido',
-      message: 'Obtenha um novo token CSRF'
-    });
-  }
-  
-  // Erro genérico
-  const status = err.status || 500;
-  const message = process.env.NODE_ENV === 'production'
-    ? 'Erro interno no servidor'
-    : err.message;
-    
-  res.status(status).json({ 
-    error: message,
-    timestamp: new Date().toISOString(),
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
-  });
-});
+app.use(errorHandler);
 
 // ========================================
-// INICIALIZAÇÃO DO SERVIDOR
+//   INICIALIZAÇÃO DO SERVIDOR
 // ========================================
 
 const PORT = process.env.PORT || 8000;
@@ -358,5 +288,6 @@ app.listen(PORT, HOST, () => {
   logger.info(`Servidor rodando em ${HOST}:${PORT}`);
   logger.info(`Documentação: http://localhost:${PORT}/api-docs`);
   logger.info(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`CORS configurado para: ${allowedOrigins.length} origens`);
 });
+
+export default app;

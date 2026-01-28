@@ -1,0 +1,9 @@
+node_modules
+coverage
+logs
+*.sqlite
+*.sqlite3
+*.log
+.env
+BASELINE.md
+FINAL.md

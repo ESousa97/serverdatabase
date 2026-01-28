@@ -1,18 +1,45 @@
-# Etapa 1: Build
-FROM node:18-alpine
+# ══════════════════════════════════════════════════════════════════
+# ES Data Base API Server - Dockerfile
+# ══════════════════════════════════════════════════════════════════
 
-# Cria diretório e define como diretório de trabalho
+# Build stage
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
-# Copia os arquivos package.json e instala as dependências
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
-# Copia o restante do código
-COPY . .
+# Install dependencies (including dev for potential build steps)
+RUN npm ci --only=production
 
-# Expõe a porta usada pelo seu app
+# Production stage
+FROM node:22-alpine
+
+# Security: Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy application code
+COPY --chown=nodejs:nodejs . .
+
+# Create logs directory
+RUN mkdir -p logs && chown nodejs:nodejs logs
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
 EXPOSE 8000
 
-# Comando para iniciar a aplicação
-CMD ["npm", "start"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8000/api/v1/ping', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+
+# Start command
+CMD ["node", "api/index.js"]

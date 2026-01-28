@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentação
+    url: https://github.com/ESousa97/serverdatabase#readme
+    about: Confira a documentação antes de abrir uma issue
+  - name: 💬 Discussões
+    url: https://github.com/ESousa97/serverdatabase/discussions
+    about: Use Discussões para perguntas e ideias

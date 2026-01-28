@@ -1,0 +1,67 @@
+# Dependabot configuration
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/Sao_Paulo'
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    labels:
+      - 'dependencies'
+      - 'automated'
+    groups:
+      # Group minor and patch updates together
+      minor-and-patch:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Keep major updates separate
+      major:
+        patterns:
+          - '*'
+        update-types:
+          - 'major'
+    ignore:
+      # Ignore Node.js version updates (handled manually)
+      - dependency-name: 'node'
+
+  # GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/Sao_Paulo'
+    commit-message:
+      prefix: 'chore(actions)'
+    labels:
+      - 'dependencies'
+      - 'github-actions'
+      - 'automated'
+
+  # Docker
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/Sao_Paulo'
+    commit-message:
+      prefix: 'chore(docker)'
+    labels:
+      - 'dependencies'
+      - 'docker'
+      - 'automated'
