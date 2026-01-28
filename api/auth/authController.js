@@ -15,14 +15,12 @@ export const login = async (req, res) => {
     res.json({ accessToken });
   } catch (err) {
     logger.error(`Erro no login: ${err.message}`);
-    res
-      .status(err.message === 'Credenciais inválidas' ? 401 : 500)
-      .json({
-        message:
-          err.message === 'Credenciais inválidas'
-            ? 'Credenciais inválidas'
-            : 'Erro interno no servidor',
-      });
+    res.status(err.message === 'Credenciais inválidas' ? 401 : 500).json({
+      message:
+        err.message === 'Credenciais inválidas'
+          ? 'Credenciais inválidas'
+          : 'Erro interno no servidor',
+    });
   }
 };
 
@@ -32,7 +30,7 @@ export const refresh = async (req, res) => {
     if (!token) return res.sendStatus(401);
     const newAccessToken = await authService.refresh(token);
     res.json({ accessToken: newAccessToken });
-  } catch (_err) {
+  } catch {
     res.sendStatus(403);
   }
 };
