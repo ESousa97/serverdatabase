@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import db from '../models/index.js';
 const { User } = db;
-import logger from '../utils/logger.js';
 
 function generateAccessToken(user) {
   return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
