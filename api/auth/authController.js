@@ -27,7 +27,9 @@ export const login = async (req, res) => {
 export const refresh = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
-    if (!token) return res.sendStatus(401);
+    if (!token) {
+      return res.sendStatus(401);
+    }
     const newAccessToken = await authService.refresh(token);
     res.json({ accessToken: newAccessToken });
   } catch {

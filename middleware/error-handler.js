@@ -7,7 +7,7 @@ import { ApiError } from '../utils/api-error.js';
 /**
  * Middleware para rotas não encontradas
  */
-export const notFoundHandler = (req, res, next) => {
+export const notFoundHandler = (req, res, _next) => {
   logger.warn(`Rota não encontrada: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     error: 'Rota não encontrada',
@@ -20,7 +20,7 @@ export const notFoundHandler = (req, res, next) => {
 /**
  * Middleware global de tratamento de erros
  */
-export const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, _next) => {
   logger.error(`Erro na aplicação: ${err.message}`, {
     stack: err.stack,
     path: req.path,
