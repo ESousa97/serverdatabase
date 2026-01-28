@@ -30,12 +30,14 @@ if (config.use_env_variable) {
 }
 
 // Carrega os modelos dinamicamente
-const modelFiles = fs.readdirSync(__dirname)
-  .filter(file =>
-    file.indexOf('.') !== 0 &&
-    file !== basename &&
-    file.slice(-3) === '.js' &&
-    file.indexOf('.test.js') === -1
+const modelFiles = fs
+  .readdirSync(__dirname)
+  .filter(
+    (file) =>
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
   );
 
 await Promise.all(
@@ -51,7 +53,7 @@ await Promise.all(
 );
 
 // Executa as associações (se definidas)
-Object.keys(db).forEach(modelName => {
+Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
