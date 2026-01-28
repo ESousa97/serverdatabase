@@ -98,7 +98,11 @@ jobs:
         run: npm ci
 
       - name: Verify start command
-        run: timeout 10 npm start || true
+        run: |
+          timeout 10 npm start || EXIT_CODE=$?
+          if [ "${EXIT_CODE:-0}" -ne 0 ] && [ "$EXIT_CODE" -ne 124 ]; then
+            exit "$EXIT_CODE"
+          fi
         env:
           NODE_ENV: test
           JWT_SECRET: test-secret

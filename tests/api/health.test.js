@@ -1,39 +1,33 @@
 import { describe, it, expect } from 'vitest';
+import request from 'supertest';
+import app from '../../api/index.js';
 
 describe('Health Check Endpoint', () => {
-  it('should return expected response structure', () => {
-    const mockResponse = {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      environment: 'test',
-    };
+  it('should return expected response structure', async () => {
+    const response = await request(app).get('/api/v1/ping');
 
-    expect(mockResponse).toHaveProperty('status');
-    expect(mockResponse).toHaveProperty('timestamp');
-    expect(mockResponse).toHaveProperty('environment');
-    expect(mockResponse.status).toBe('ok');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('status', 'ok');
+    expect(response.body).toHaveProperty('timestamp');
+    expect(response.body).toHaveProperty('environment');
   });
 
-  it('should have valid ISO timestamp', () => {
-    const mockResponse = {
-      timestamp: new Date().toISOString(),
-    };
+  it('should have valid ISO timestamp', async () => {
+    const response = await request(app).get('/api/v1/ping');
 
-    const date = new Date(mockResponse.timestamp);
-    expect(date.toISOString()).toBe(mockResponse.timestamp);
+    const date = new Date(response.body.timestamp);
+    expect(date.toISOString()).toBe(response.body.timestamp);
   });
 });
 
 describe('CSRF Token Endpoint', () => {
-  it('should return expected response structure', () => {
-    const mockResponse = {
-      csrfToken: 'mock-csrf-token-12345',
-      timestamp: new Date().toISOString(),
-    };
+  it('should return expected response structure', async () => {
+    const response = await request(app).get('/api/v1/csrf-token');
 
-    expect(mockResponse).toHaveProperty('csrfToken');
-    expect(mockResponse).toHaveProperty('timestamp');
-    expect(typeof mockResponse.csrfToken).toBe('string');
-    expect(mockResponse.csrfToken.length).toBeGreaterThan(0);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('csrfToken');
+    expect(response.body).toHaveProperty('timestamp');
+    expect(typeof response.body.csrfToken).toBe('string');
+    expect(response.body.csrfToken.length).toBeGreaterThan(0);
   });
 });

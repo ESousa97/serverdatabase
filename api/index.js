@@ -89,7 +89,6 @@ app.use(cors(corsOptions));
 
 app.use(
   helmet({
-    contentSecurityPolicy: isProduction ? undefined : false,
     crossOriginEmbedderPolicy: false,
   })
 );
@@ -104,13 +103,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 const csrfSecret = process.env.CSRF_SECRET || process.env.JWT_SECRET;
 
+const csrfCookieSameSite = (
+  process.env.CSRF_COOKIE_SAMESITE || (isProduction ? 'none' : 'lax')
+).toLowerCase();
+const csrfCookieSecure = csrfCookieSameSite === 'none' ? true : isProduction;
+
 const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret,
   cookieName: 'x-csrf-token',
   cookieOptions: {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    secure: csrfCookieSecure,
+    sameSite: csrfCookieSameSite,
     path: '/',
     maxAge: 3600000, // 1 hour
   },
@@ -118,7 +122,14 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
 });
 
 // Routes that don't need CSRF protection
-const csrfExemptRoutes = ['/api/v1/ping', '/api/v1/csrf-token', '/api-docs'];
+const csrfExemptRoutes = [
+  '/api/v1/ping',
+  '/api/v1/csrf-token',
+  '/api-docs',
+  '/api/v1/auth/login',
+  '/api/v1/auth/refresh',
+  '/api/v1/auth/logout',
+];
 
 const conditionalCsrf = (req, res, next) => {
   // Skip CSRF for safe methods
@@ -360,10 +371,12 @@ app.use((err, req, res, _next) => {
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-app.listen(PORT, HOST, () => {
-  logger.info(`Server running on ${HOST}:${PORT}`);
-  logger.info(`Documentation: http://localhost:${PORT}/api-docs`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, HOST, () => {
+    logger.info(`Server running on ${HOST}:${PORT}`);
+    logger.info(`Documentation: http://localhost:${PORT}/api-docs`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
 
 export default app;
