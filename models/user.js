@@ -1,18 +1,22 @@
 // models/user.js
 export default (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+  const User = sequelize.define(
+    'User',
+    {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
+    {
+      tableName: 'users',
     }
-  }, {
-    tableName: 'users'
-  });
+  );
 
   return User;
 };

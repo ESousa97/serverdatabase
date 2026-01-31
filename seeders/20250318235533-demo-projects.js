@@ -9,12 +9,12 @@ module.exports = {
         conteudo: 'Conteúdo do projeto demo',
         categoria: 'Teste',
         data_criacao: Sequelize.literal('CURRENT_TIMESTAMP'),
-        data_modificacao: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        data_modificacao: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
     ]);
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface, _Sequelize) {
     await queryInterface.bulkDelete('projects', null, {});
-  }
+  },
 };

@@ -1,45 +1,42 @@
 ---
-name: 🐛 Bug Report
-about: Reportar um bug para nos ajudar a melhorar
+name: Bug Report
+about: Report a bug to help us improve
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Descrição do Bug
+## Bug Description
 
-Uma descrição clara e concisa do bug.
+A clear and concise description of what the bug is.
 
-## Passos para Reproduzir
+## Steps to Reproduce
 
-1. Vá para '...'
-2. Clique em '...'
-3. Veja o erro
+1. Go to '...'
+2. Click on '...'
+3. Scroll down to '...'
+4. See error
 
-## Comportamento Esperado
+## Expected Behavior
 
-Uma descrição clara do que você esperava que acontecesse.
+What you expected to happen.
 
-## Comportamento Atual
+## Actual Behavior
 
-O que realmente aconteceu.
+What actually happened.
 
-## Screenshots
+## Environment
 
-Se aplicável, adicione screenshots para ajudar a explicar o problema.
+- **Node.js version:** [e.g., 22.x]
+- **OS:** [e.g., Ubuntu 22.04]
+- **Database:** [e.g., SQLite, PostgreSQL]
 
-## Ambiente
+## Additional Context
 
-- **Node.js version:** [ex: 22.x]
-- **OS:** [ex: Windows 11, Ubuntu 22.04]
-- **Database:** [ex: SQLite, PostgreSQL]
+Add any other context about the problem here.
 
 ## Logs
 
 ```
-Cole aqui logs relevantes
+Paste relevant logs here
 ```
-
-## Contexto Adicional
-
-Adicione qualquer outro contexto sobre o problema aqui.

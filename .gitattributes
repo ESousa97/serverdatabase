@@ -1,3 +1,4 @@
+# Auto detect text files and perform LF normalization
 * text=auto eol=lf
 
 # JavaScript
@@ -9,7 +10,7 @@
 *.json text eol=lf
 
 # Markdown
-*.md text eol=lf
+*.md text eol=lf diff=markdown
 
 # YAML
 *.yml text eol=lf
@@ -23,8 +24,19 @@ Dockerfile text eol=lf
 .dockerignore text eol=lf
 
 # Git
-.gitattributes text eol=lf
 .gitignore text eol=lf
+.gitattributes text eol=lf
 
-# Lock files - do not diff
-package-lock.json -diff
+# Denote all files that are truly binary and should not be modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.sqlite binary
+*.db binary
+
+# Linguist overrides
+*.md linguist-documentation
+docs/* linguist-documentation

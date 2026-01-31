@@ -1,4 +1,5 @@
 // tests/integration/health.test.js
+import { describe, it } from 'vitest';
 // import request from 'supertest'; // TODO: Descomentar quando app for exportado
 
 // Este teste requer que o app seja exportado

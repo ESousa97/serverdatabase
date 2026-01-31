@@ -1,40 +1,35 @@
-## Descrição
+## Description
 
-Descreva brevemente as mudanças realizadas neste PR.
+Brief description of the changes in this PR.
 
-## Tipo de Mudança
+## Type of Change
 
-- [ ] 🐛 Bug fix (mudança que corrige um problema)
-- [ ] ✨ Nova feature (mudança que adiciona funcionalidade)
-- [ ] 💥 Breaking change (correção ou feature que causa mudança em funcionalidade existente)
-- [ ] 📝 Documentação (mudanças apenas em documentação)
-- [ ] 🔧 Configuração (mudanças em arquivos de configuração)
-- [ ] ♻️ Refatoração (mudança que não corrige bug nem adiciona feature)
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
+- [ ] Refactoring (no functional changes)
 
-## Mudanças Realizadas
+## Related Issues
 
-- Mudança 1
-- Mudança 2
-- ...
-
-## Como Testar
-
-1. Passo 1
-2. Passo 2
-3. ...
+Fixes #(issue number)
 
 ## Checklist
 
-- [ ] Meu código segue o style guide do projeto
-- [ ] Realizei uma self-review do meu código
-- [ ] Comentei meu código em áreas de difícil compreensão
-- [ ] Fiz as mudanças correspondentes na documentação
-- [ ] Minhas mudanças não geram novos warnings
-- [ ] Adicionei testes que provam que minha correção/feature funciona
-- [ ] Testes unitários novos e existentes passam localmente
+- [ ] My code follows the project's style guidelines
+- [ ] I have performed a self-review of my code
+- [ ] I have added tests that prove my fix/feature works
+- [ ] New and existing tests pass locally with my changes
+- [ ] I have updated the documentation accordingly
+- [ ] My changes generate no new warnings
 
-## Screenshots (se aplicável)
+## Testing
 
-## Contexto Adicional
+Describe how you tested your changes:
 
-Adicione qualquer outro contexto sobre o PR aqui.
+1. Test A
+2. Test B
+
+## Screenshots (if applicable)
+
+Add screenshots to help explain your changes.

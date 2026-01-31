@@ -1,69 +1,65 @@
 # Changelog
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+All notable changes to this project will be documented in this file.
 
-O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-01-25
 
-### Adicionado
+### Added
 
-- Documentação completa (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY)
-- Middleware de autenticação centralizado (`middleware/auth.js`)
-- Middleware de tratamento de erros (`middleware/error-handler.js`)
-- Middleware de validação (`middleware/validate.js`)
-- Cliente GitHub API centralizado (`utils/github-client.js`)
-- Classe de erro padronizada (`utils/api-error.js`)
-- Arquivo `.env.example` com template de variáveis
-- Arquivo `.editorconfig` para consistência de estilo
-- Arquivo `.gitattributes` para normalização de line endings
-- Templates de Issue e PR para GitHub
-- Health check com verificação de banco de dados (`/api/v1/health`)
-- Configuração de ESLint e Prettier
-- Configuração de Jest para testes
-- Scripts npm padronizados
+- ESLint configuration with security plugin
+- Prettier for code formatting
+- Vitest for unit testing
+- GitHub Actions CI/CD workflows
+- Security scanning workflow with CodeQL
+- Dependabot configuration
+- Issue and PR templates
+- CONTRIBUTING.md guidelines
+- CODE_OF_CONDUCT.md
+- SECURITY.md policy
+- `.editorconfig` for consistent formatting
+- `.env.example` template
 
-### Alterado
+### Changed
 
-- Refatorado `api/index.js` para usar middlewares centralizados
-- Refatorado `api/auth/authMiddleware.js` de CommonJS para ES Modules
-- Refatorado `api/imageupload.js` de next-connect para Express puro
-- Refatorado rotas de GitHub para usar cliente centralizado
-- Atualizado `package.json` com scripts e dependências
-- Atualizado `Dockerfile` para Node.js 22 com multi-stage build
-- Atualizado `.gitignore` com padrões abrangentes
-- Melhorado tratamento de erros em todas as rotas
-- Padronizado logging (removido console.log/error)
-- Configuração de CORS via variável de ambiente
+- Replaced deprecated `csurf` with `csrf-csrf` library
+- Updated Express to 4.21.2 (security fixes)
+- Updated Axios to 1.7.9 (security fixes)
+- Updated express-validator to v7
+- Updated Sentry SDK to v8
+- Updated swagger-ui-express to v5
+- Improved README.md with concise documentation
+- Refactored CORS configuration with environment variables
+- Improved error handling middleware
 
-### Removido
+### Removed
 
-- Dependência `csurf` (depreciada com vulnerabilidades)
-- Dependência `next-connect` (desnecessária em Express)
-- Dependência `redis` (não utilizada)
-- URLs hardcoded em `directorylist.js`
-- Código duplicado de chamadas à API do GitHub
+- `next-connect` (unused dependency)
+- `redis` (unused dependency)
+- Deprecated `csurf` package
 
-### Segurança
+### Security
 
-- Removida dependência `csurf` com vulnerabilidades conhecidas
-- Atualizada versão mínima do Node.js para 20+
-- Adicionada documentação de segurança (SECURITY.md)
+- Fixed 17+ npm audit vulnerabilities
+- Added security headers via Helmet
+- Implemented rate limiting on auth endpoints
+- Added input validation on all endpoints
 
-## [1.0.0] - 2025-01-27
+## [1.0.0] - 2025-03-18
 
-### Adicionado
+### Added
 
-- Versão inicial do ES Data Base API Server
-- Autenticação JWT com access e refresh tokens
-- CRUD de Projetos
-- CRUD de Cards
-- Upload de imagens via GitHub API
-- Gerenciamento de diretórios via GitHub API
-- Documentação Swagger/OpenAPI
-- Containerização com Docker
-- Suporte a SQLite (dev) e PostgreSQL (prod)
-- Logging com Winston
-- Monitoramento com Sentry (opcional)
-- Proteções de segurança (Helmet, Rate Limiting, CORS)
+- Initial release
+- Express.js REST API server
+- Sequelize ORM with SQLite/PostgreSQL support
+- JWT authentication with refresh tokens
+- CRUD operations for Projects and Cards
+- User authentication system
+- GitHub integration for file uploads
+- Swagger API documentation
+- Winston logging
+- Sentry error monitoring
+- Docker support
+- Database migrations and seeders

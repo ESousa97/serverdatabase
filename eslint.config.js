@@ -1,66 +1,78 @@
-// eslint.config.js
 import js from '@eslint/js';
-import nodePlugin from 'eslint-plugin-node';
-import prettierConfig from 'eslint-config-prettier';
+import security from 'eslint-plugin-security';
 
 export default [
   js.configs.recommended,
-  prettierConfig,
   {
+    plugins: {
+      security,
+    },
     languageOptions: {
       ecmaVersion: 2024,
       sourceType: 'module',
       globals: {
-        // Node.js globals
-        process: 'readonly',
         console: 'readonly',
+        process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        // Jest globals
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        jest: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
       },
     },
     rules: {
-      // Errors
-      'no-console': 'off', // Permitido para backend logging
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_|next|req|res' }],
-      'no-undef': 'error',
-
-      // Best Practices
-      eqeqeq: ['error', 'always'],
-      'no-eval': 'error',
-      'no-implied-eval': 'error',
-      'no-new-func': 'error',
+      // Best practices
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-console': 'off',
       'prefer-const': 'error',
       'no-var': 'error',
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
 
-      // Style (handled by Prettier, but some semantic rules)
-      'prefer-template': 'warn',
-      'object-shorthand': 'warn',
-      'prefer-arrow-callback': 'warn',
-
-      // ES Modules
-      'no-duplicate-imports': 'error',
+      // Security rules
+      'security/detect-object-injection': 'warn',
+      'security/detect-non-literal-regexp': 'warn',
+      'security/detect-unsafe-regex': 'error',
+      'security/detect-buffer-noassert': 'error',
+      'security/detect-eval-with-expression': 'error',
+      'security/detect-no-csrf-before-method-override': 'error',
+      'security/detect-possible-timing-attacks': 'warn',
+    },
+  },
+  // CommonJS files (migrations, seeders)
+  {
+    files: ['migrations/**/*.js', 'seeders/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+  },
+  // Test files
+  {
+    files: ['tests/**/*.js', '**/*.test.js', '**/*.spec.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        vi: 'readonly',
+      },
     },
   },
   {
-    files: ['**/*.test.js', '**/*.spec.js', 'tests/**/*.js'],
-    rules: {
-      'no-unused-expressions': 'off',
-    },
-  },
-  {
-    ignores: ['node_modules/**', 'coverage/**', 'logs/**', '*.config.js', '.*.js'],
+    ignores: ['node_modules/**', 'coverage/**', 'dist/**', 'build/**', '*.config.js', 'logs/**'],
   },
 ];

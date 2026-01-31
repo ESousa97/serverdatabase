@@ -1,197 +1,131 @@
-# Contribuindo para ES Data Base API
+# Contributing to ES Database API
 
-Obrigado por considerar contribuir para o ES Data Base API! Este documento fornece as diretrizes para contribuição.
+Thank you for your interest in contributing! This document provides guidelines and information for contributors.
 
-## 📋 Índice
+## Code of Conduct
 
-- [Código de Conduta](#código-de-conduta)
-- [Como Contribuir](#como-contribuir)
-- [Padrões de Código](#padrões-de-código)
-- [Processo de Pull Request](#processo-de-pull-request)
-- [Relatando Bugs](#relatando-bugs)
-- [Sugerindo Funcionalidades](#sugerindo-funcionalidades)
+By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## Código de Conduta
+## How to Contribute
 
-Este projeto segue nosso [Código de Conduta](CODE_OF_CONDUCT.md). Ao participar, você concorda em manter esse código.
+### Reporting Bugs
 
-## Como Contribuir
+1. Check if the bug has already been reported in [Issues](https://github.com/ESousa97/serverdatabase/issues)
+2. If not, create a new issue using the bug report template
+3. Include:
+   - Clear description of the bug
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Environment details (Node.js version, OS)
+   - Relevant logs or screenshots
 
-### 1. Fork e Clone
+### Suggesting Features
+
+1. Check existing issues and discussions for similar suggestions
+2. Open a new issue using the feature request template
+3. Describe the problem your feature would solve
+4. Propose your solution and alternatives considered
+
+### Pull Requests
+
+1. Fork the repository
+2. Create a feature branch from `main`:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Make your changes following our coding standards
+4. Write or update tests as needed
+5. Run the test suite:
+   ```bash
+   npm test
+   npm run lint
+   ```
+6. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/):
+   ```bash
+   git commit -m "feat: add new feature"
+   git commit -m "fix: resolve issue with X"
+   git commit -m "docs: update README"
+   ```
+7. Push to your fork and submit a pull request
+
+## Development Setup
 
 ```bash
-# Fork o repositório no GitHub, então:
-git clone https://github.com/seu-usuario/serverdatabase.git
+# Clone your fork
+git clone https://github.com/YOUR_USERNAME/serverdatabase.git
 cd serverdatabase
-git remote add upstream https://github.com/ESousa97/serverdatabase.git
-```
 
-### 2. Configure o Ambiente
-
-```bash
-# Instale dependências
+# Install dependencies
 npm install
 
-# Copie variáveis de ambiente
+# Set up environment
 cp .env.example .env
 
-# Execute o servidor
+# Run migrations
+npm run db:migrate
+
+# Start development server
 npm run dev
 ```
 
-### 3. Crie uma Branch
+## Coding Standards
+
+- Use ES6+ features (ES Modules)
+- Follow existing code style (enforced by ESLint and Prettier)
+- Write meaningful variable and function names
+- Add comments for complex logic
+- Keep functions small and focused
+
+### Running Quality Checks
 
 ```bash
-# Atualize main
-git checkout main
-git pull upstream main
+# Lint code
+npm run lint
 
-# Crie sua branch
-git checkout -b tipo/descricao-curta
-
-# Exemplos:
-git checkout -b feat/add-user-roles
-git checkout -b fix/auth-token-expiry
-git checkout -b docs/update-api-docs
-```
-
-### Tipos de Branch
-
-| Prefixo     | Uso                   |
-| ----------- | --------------------- |
-| `feat/`     | Nova funcionalidade   |
-| `fix/`      | Correção de bug       |
-| `docs/`     | Documentação          |
-| `refactor/` | Refatoração de código |
-| `test/`     | Testes                |
-| `chore/`    | Tarefas de manutenção |
-
-## Padrões de Código
-
-### Estilo de Código
-
-Este projeto usa ESLint e Prettier. Execute antes de commitar:
-
-```bash
+# Fix lint issues
 npm run lint:fix
+
+# Format code
 npm run format
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
 ```
 
-### Convenções
+## Commit Message Format
 
-- **ES Modules**: Use `import/export` (não `require/module.exports`)
-- **Async/Await**: Prefira sobre callbacks e `.then()`
-- **Nomes descritivos**: Variáveis e funções com nomes claros
-- **Comentários**: Documente lógica complexa
-- **Logs**: Use o logger centralizado, não `console.log`
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
-### Exemplo de Código
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, semicolons)
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+- `chore:` - Maintenance tasks
 
-```javascript
-// ✅ Bom
-import express from 'express';
-import logger from '../utils/logger.js';
-
-const router = express.Router();
-
-router.get('/', async (req, res, next) => {
-  try {
-    const items = await Item.findAll();
-    logger.info(`Listed ${items.length} items`);
-    res.json(items);
-  } catch (error) {
-    next(error);
-  }
-});
-
-export default router;
-```
-
-### Commits (Conventional Commits)
-
-Siga o padrão [Conventional Commits](https://www.conventionalcommits.org/):
+Examples:
 
 ```
-tipo(escopo): descrição curta
-
-[corpo opcional]
-
-[rodapé opcional]
+feat: add user profile endpoint
+fix: resolve authentication token expiry issue
+docs: update API documentation
+refactor: simplify error handling middleware
 ```
 
-**Tipos permitidos:**
+## Pull Request Guidelines
 
-| Tipo       | Descrição                      |
-| ---------- | ------------------------------ |
-| `feat`     | Nova funcionalidade            |
-| `fix`      | Correção de bug                |
-| `docs`     | Documentação                   |
-| `style`    | Formatação (não altera código) |
-| `refactor` | Refatoração                    |
-| `test`     | Testes                         |
-| `chore`    | Manutenção                     |
+- Keep PRs focused on a single feature or fix
+- Update documentation if needed
+- Ensure all tests pass
+- Request review from maintainers
+- Be responsive to feedback
 
-**Exemplos:**
+## Questions?
 
-```bash
-feat(auth): add refresh token rotation
-fix(projects): handle empty category filter
-docs(readme): update installation instructions
-refactor(api): centralize error handling
-```
+Open a [discussion](https://github.com/ESousa97/serverdatabase/discussions) or reach out to the maintainers.
 
-## Processo de Pull Request
-
-### 1. Antes de Abrir PR
-
-- [ ] Código segue os padrões do projeto
-- [ ] Testes passam (`npm test`)
-- [ ] Lint passa (`npm run lint`)
-- [ ] Documentação atualizada se necessário
-- [ ] Commits seguem Conventional Commits
-
-### 2. Descrição do PR
-
-Use o template de PR fornecido e inclua:
-
-- Descrição clara das mudanças
-- Tipo de mudança (feat, fix, etc.)
-- Como testar
-- Screenshots se aplicável
-
-### 3. Revisão
-
-- Mantenha o PR focado em uma única mudança
-- Responda feedback construtivamente
-- Faça squash de commits se solicitado
-
-## Relatando Bugs
-
-Use o template de issue para bugs e inclua:
-
-1. **Descrição clara** do problema
-2. **Passos para reproduzir**
-3. **Comportamento esperado** vs **atual**
-4. **Ambiente** (Node.js version, OS, etc.)
-5. **Logs de erro** se disponíveis
-
-## Sugerindo Funcionalidades
-
-Antes de sugerir:
-
-1. Verifique se não existe issue similar
-2. Considere se está alinhado com o propósito do projeto
-
-Ao criar issue:
-
-1. Descreva o problema que resolve
-2. Proponha a solução desejada
-3. Liste alternativas consideradas
-
-## 🙏 Agradecimentos
-
-Agradecemos todas as contribuições, grandes ou pequenas!
-
----
-
-Dúvidas? Abra uma issue ou entre em contato.
+Thank you for contributing!
