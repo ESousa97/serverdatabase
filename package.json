@@ -52,7 +52,7 @@
     "prettier": "^3.4.2",
     "sequelize-cli": "^6.6.2",
     "supertest": "^7.0.0",
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.18"
   },
   "overrides": {
     "jws": "^4.0.0",
