@@ -21,11 +21,9 @@ if (process.env.SENTRY_DSN) {
 }
 
 // Validate required environment variables
-const requiredEnvVars = ['JWT_SECRET', 'JWT_REFRESH_SECRET'];
-const envSnapshot = { ...process.env };
-const missingVars = requiredEnvVars.filter((v) => {
-  return !(v in envSnapshot) || !envSnapshot[v];
-});
+const missingVars = [];
+if (!process.env.JWT_SECRET) missingVars.push('JWT_SECRET');
+if (!process.env.JWT_REFRESH_SECRET) missingVars.push('JWT_REFRESH_SECRET');
 
 if (missingVars.length > 0) {
   logger.error(`Missing required environment variables: ${missingVars.join(', ')}`);
