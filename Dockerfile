@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only (skip optional to match lockfile)
-RUN npm ci --omit=dev --omit=optional && npm cache clean --force
+# Install production dependencies only
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Production stage
 FROM node:25-alpine
