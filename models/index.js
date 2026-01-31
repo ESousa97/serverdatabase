@@ -15,10 +15,13 @@ const env = process.env.NODE_ENV || 'development';
 // Importe o arquivo de configuração; ajuste conforme a forma como ele é exportado
 import configModule from '../config/config.js';
 
-// Validate environment against allowed values to prevent object injection
-const allowedEnvs = ['development', 'test', 'production'];
-const safeEnv = allowedEnvs.includes(env) ? env : 'development';
-const config = Object.getOwnPropertyDescriptor(configModule, safeEnv)?.value;
+// Use a safe config lookup map to prevent object injection
+const configMap = new Map([
+  ['development', configModule.development],
+  ['test', configModule.test],
+  ['production', configModule.production],
+]);
+const config = configMap.get(env) || configMap.get('development');
 
 const db = {};
 
@@ -57,8 +60,8 @@ await Promise.all(
 );
 
 // Executa as associações (se definidas)
-Object.keys(db).forEach((modelName) => {
-  const model = Object.getOwnPropertyDescriptor(db, modelName)?.value;
+const modelMap = new Map(Object.entries(db));
+modelMap.forEach((model) => {
   if (model && typeof model.associate === 'function') {
     model.associate(db);
   }
