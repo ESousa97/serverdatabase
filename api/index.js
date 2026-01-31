@@ -108,7 +108,7 @@ const csrfCookieSameSite = (
 ).toLowerCase();
 const csrfCookieSecure = csrfCookieSameSite === 'none' ? true : isProduction;
 
-const { generateToken, doubleCsrfProtection } = doubleCsrf({
+const csrfProtection = doubleCsrf({
   getSecret: () => csrfSecret,
   cookieName: 'x-csrf-token',
   cookieOptions: {
@@ -120,6 +120,9 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
   },
   getTokenFromRequest: (req) => req.headers['x-csrf-token'],
 });
+
+const generateToken = csrfProtection.generateToken;
+const doubleCsrfProtection = csrfProtection.doubleCsrfProtection;
 
 // Routes that don't need CSRF protection
 const csrfExemptRoutes = [
