@@ -74,20 +74,20 @@ GITHUB_TOKEN=ghp_your_token
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/ping` | Health check |
-| GET | `/api/v1/csrf-token` | Get CSRF token |
-| POST | `/api/v1/auth/login` | User login |
-| POST | `/api/v1/auth/refresh` | Refresh token |
-| POST | `/api/v1/auth/logout` | User logout |
-| GET/POST | `/api/v1/projects` | List/Create projects |
-| GET/PUT/DELETE | `/api/v1/projects/:id` | Project operations |
-| GET/POST | `/api/v1/cards` | List/Create cards |
-| GET/PUT/DELETE | `/api/v1/cards/:id` | Card operations |
-| GET | `/api/v1/categories` | List categories |
-| GET | `/api/v1/search` | Search |
-| POST | `/api/v1/imageupload` | Upload image |
+| Method         | Endpoint               | Description          |
+| -------------- | ---------------------- | -------------------- |
+| GET            | `/api/v1/ping`         | Health check         |
+| GET            | `/api/v1/csrf-token`   | Get CSRF token       |
+| POST           | `/api/v1/auth/login`   | User login           |
+| POST           | `/api/v1/auth/refresh` | Refresh token        |
+| POST           | `/api/v1/auth/logout`  | User logout          |
+| GET/POST       | `/api/v1/projects`     | List/Create projects |
+| GET/PUT/DELETE | `/api/v1/projects/:id` | Project operations   |
+| GET/POST       | `/api/v1/cards`        | List/Create cards    |
+| GET/PUT/DELETE | `/api/v1/cards/:id`    | Card operations      |
+| GET            | `/api/v1/categories`   | List categories      |
+| GET            | `/api/v1/search`       | Search               |
+| POST           | `/api/v1/imageupload`  | Upload image         |
 
 Full documentation available at `/api-docs` when the server is running.
 

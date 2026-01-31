@@ -108,6 +108,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore:` - Maintenance tasks
 
 Examples:
+
 ```
 feat: add user profile endpoint
 fix: resolve authentication token expiry issue

@@ -41,14 +41,38 @@ export default [
       'security/detect-possible-timing-attacks': 'warn',
     },
   },
+  // CommonJS files (migrations, seeders)
   {
-    ignores: [
-      'node_modules/**',
-      'coverage/**',
-      'dist/**',
-      'build/**',
-      '*.config.js',
-      'logs/**',
-    ],
+    files: ['migrations/**/*.js', 'seeders/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+  },
+  // Test files
+  {
+    files: ['tests/**/*.js', '**/*.test.js', '**/*.spec.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        vi: 'readonly',
+      },
+    },
+  },
+  {
+    ignores: ['node_modules/**', 'coverage/**', 'dist/**', 'build/**', '*.config.js', 'logs/**'],
   },
 ];

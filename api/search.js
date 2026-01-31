@@ -2,35 +2,38 @@
 import db from '../models/index.js';
 import { QueryTypes } from 'sequelize';
 import asyncHandler from 'express-async-handler';
+import logger from '../utils/logger.js';
 
 const { sequelize } = db;
 
-async function handler(req, res) {
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  try {
-    const { query } = req.query;
-    if (!query)
-      return res.status(400).json({ error: 'Termo de busca não fornecido' });
+const handler = asyncHandler(async (req, res) => {
+  const { query } = req.query;
 
-    // Removido o cache via Redis para evitar a tentativa de conexão
-    const searchTerms = `%${query}%`;
-    const sql = `
-      SELECT * FROM projects
-      WHERE conteudo ILIKE :searchTerms
-      LIMIT 10
-    `;
-    const results = await sequelize.query(sql, {
-      replacements: { searchTerms },
-      type: QueryTypes.SELECT,
-    });
-
-    res.status(200).json(results);
-  } catch (error) {
-    console.error('Erro ao buscar dados:', error);
-    res
-      .status(500)
-      .json({ message: 'Erro ao consultar o banco de dados' });
+  if (!query) {
+    return res.status(400).json({ error: 'Termo de busca não fornecido' });
   }
-}
 
-export default asyncHandler(handler);
+  const searchTerms = `%${query}%`;
+
+  // Detecta o dialeto do banco para usar a sintaxe correta
+  const dialect = sequelize.getDialect();
+  const likeOperator = dialect === 'postgres' ? 'ILIKE' : 'LIKE';
+
+  const sql = `
+    SELECT * FROM projects
+    WHERE conteudo ${likeOperator} :searchTerms
+       OR titulo ${likeOperator} :searchTerms
+       OR descricao ${likeOperator} :searchTerms
+    LIMIT 10
+  `;
+
+  const results = await sequelize.query(sql, {
+    replacements: { searchTerms },
+    type: QueryTypes.SELECT,
+  });
+
+  logger.debug(`Busca realizada: "${query}" - ${results.length} resultados`);
+  res.status(200).json(results);
+});
+
+export default handler;

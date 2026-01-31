@@ -1,34 +1,34 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/Sao_Paulo"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/Sao_Paulo'
     open-pull-requests-limit: 10
     reviewers:
-      - "ESousa97"
+      - 'ESousa97'
     labels:
-      - "dependencies"
-      - "security"
+      - 'dependencies'
+      - 'security'
     commit-message:
-      prefix: "deps"
+      prefix: 'deps'
     groups:
       production-dependencies:
         patterns:
-          - "*"
+          - '*'
         exclude-patterns:
-          - "@types/*"
-          - "eslint*"
-          - "prettier*"
-          - "vitest*"
+          - '@types/*'
+          - 'eslint*'
+          - 'prettier*'
+          - 'vitest*'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     labels:
-      - "ci"
-      - "dependencies"
+      - 'ci'
+      - 'dependencies'

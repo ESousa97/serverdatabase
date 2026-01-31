@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2026-01-25
 
 ### Added
+
 - ESLint configuration with security plugin
 - Prettier for code formatting
 - Vitest for unit testing
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.env.example` template
 
 ### Changed
+
 - Replaced deprecated `csurf` with `csrf-csrf` library
 - Updated Express to 4.21.2 (security fixes)
 - Updated Axios to 1.7.9 (security fixes)
@@ -33,11 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved error handling middleware
 
 ### Removed
+
 - `next-connect` (unused dependency)
 - `redis` (unused dependency)
 - Deprecated `csurf` package
 
 ### Security
+
 - Fixed 17+ npm audit vulnerabilities
 - Added security headers via Helmet
 - Implemented rate limiting on auth endpoints
@@ -46,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-03-18
 
 ### Added
+
 - Initial release
 - Express.js REST API server
 - Sequelize ORM with SQLite/PostgreSQL support
