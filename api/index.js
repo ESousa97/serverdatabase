@@ -322,7 +322,7 @@ if (process.env.SENTRY_DSN) {
 }
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use((req, res) => {
   logger.warn(`Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     error: 'Route not found',
