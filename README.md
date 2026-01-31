@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/ESousa97/serverdatabase/actions/workflows/ci.yml/badge.svg)](https://github.com/ESousa97/serverdatabase/actions/workflows/ci.yml)
 [![Security](https://github.com/ESousa97/serverdatabase/actions/workflows/security.yml/badge.svg)](https://github.com/ESousa97/serverdatabase/actions/workflows/security.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/ESousa97/serverdatabase/badge)](https://www.codefactor.io/repository/github/ESousa97/serverdatabase)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 
