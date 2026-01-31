@@ -108,9 +108,8 @@ const csrfCookieSameSite = (
 ).toLowerCase();
 const csrfCookieSecure = csrfCookieSameSite === 'none' ? true : isProduction;
 
-const csrfProtection = doubleCsrf({
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret,
-  getSessionIdentifier: (req) => req.ip || req.headers['x-forwarded-for'] || 'anonymous',
   cookieName: 'x-csrf-token',
   cookieOptions: {
     httpOnly: true,
@@ -119,11 +118,8 @@ const csrfProtection = doubleCsrf({
     path: '/',
     maxAge: 3600000, // 1 hour
   },
-  getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
+  getTokenFromRequest: (req) => req.headers['x-csrf-token'],
 });
-
-const generateToken = csrfProtection.generateCsrfToken;
-const doubleCsrfProtection = csrfProtection.doubleCsrfProtection;
 
 // Routes that don't need CSRF protection
 const csrfExemptRoutes = [
@@ -326,7 +322,7 @@ if (process.env.SENTRY_DSN) {
 }
 
 // 404 handler
-app.use((req, res) => {
+app.use('*', (req, res) => {
   logger.warn(`Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     error: 'Route not found',
