@@ -2,6 +2,7 @@
 // Cliente centralizado para interações com a API do GitHub
 
 import axios from 'axios';
+import path from 'path';
 import logger from './logger.js';
 
 /**
@@ -13,6 +14,34 @@ const githubApi = axios.create({
     Accept: 'application/vnd.github+json',
   },
 });
+
+const posixPath = path.posix || path;
+
+/**
+ * Constrói um caminho seguro dentro do repositório garantindo que permaneça
+ * sob o diretório base configurado.
+ *
+ * @param {string} basePath - Caminho base dentro do repositório (por exemplo, "public/assets")
+ * @param {string} subPath - Caminho fornecido pelo usuário relativo ao basePath
+ * @returns {string} Caminho completo e normalizado dentro do repositório
+ * @throws {Error} Se o caminho resultante escapar do basePath
+ */
+const buildSafeRepoPath = (basePath, subPath = '') => {
+  const normalizedBase = basePath.replace(/^\/+/, '').replace(/\/+$/, '');
+  const safeSubPath = (subPath || '').replace(/^\/+/, '');
+  const fullPath = safeSubPath
+    ? posixPath.join(normalizedBase, safeSubPath)
+    : normalizedBase;
+
+  if (
+    fullPath !== normalizedBase &&
+    !fullPath.startsWith(normalizedBase + '/')
+  ) {
+    throw new Error('Invalid path: outside of allowed base path');
+  }
+
+  return fullPath;
+};
 
 // Interceptor para adicionar token de autenticação
 githubApi.interceptors.request.use((config) => {
@@ -57,7 +86,7 @@ const getRepoConfig = () => ({
  */
 export const listDirectories = async (path = '') => {
   const config = getRepoConfig();
-  const fullPath = path ? `${config.basePath}/${path}` : config.basePath;
+  const fullPath = buildSafeRepoPath(config.basePath, path);
   const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   const response = await githubApi.get(url, {
@@ -74,7 +103,8 @@ export const listDirectories = async (path = '') => {
  */
 export const listDirectoryContent = async (directory) => {
   const config = getRepoConfig();
-  const url = `/repos/${config.repo}/contents/${config.basePath}/${directory}`;
+  const fullPath = buildSafeRepoPath(config.basePath, directory);
+  const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   try {
     const response = await githubApi.get(url, {
