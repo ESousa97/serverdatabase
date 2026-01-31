@@ -118,10 +118,10 @@ const csrfProtection = doubleCsrf({
     path: '/',
     maxAge: 3600000, // 1 hour
   },
-  getTokenFromRequest: (req) => req.headers['x-csrf-token'],
+  getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
 });
 
-const generateToken = csrfProtection.generateToken;
+const generateToken = csrfProtection.generateCsrfToken;
 const doubleCsrfProtection = csrfProtection.doubleCsrfProtection;
 
 // Routes that don't need CSRF protection
