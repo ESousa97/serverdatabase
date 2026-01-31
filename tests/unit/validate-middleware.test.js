@@ -1,10 +1,11 @@
 // tests/unit/validate-middleware.test.js
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { validate } from '../../middleware/validate.js';
 import { validationResult } from 'express-validator';
 
 // Mock do express-validator
-jest.mock('express-validator', () => ({
-  validationResult: jest.fn(),
+vi.mock('express-validator', () => ({
+  validationResult: vi.fn(),
 }));
 
 describe('Validate Middleware', () => {
@@ -15,10 +16,10 @@ describe('Validate Middleware', () => {
   beforeEach(() => {
     mockReq = {};
     mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     };
-    mockNext = jest.fn();
+    mockNext = vi.fn();
   });
 
   it('should call next when no validation errors', () => {

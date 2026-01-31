@@ -17,7 +17,7 @@ const logger = createLogger({
   transports: [
     new transports.Console(),
     // Caso precise, configure o transporte para arquivo:
-    new transports.File({ filename: 'logs/server.log' })
+    new transports.File({ filename: 'logs/server.log' }),
   ],
   exitOnError: false, // Não encerra o processo em caso de erro tratado
 });

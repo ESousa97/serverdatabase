@@ -1,9 +1,5 @@
-# Dependabot configuration
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
-
 version: 2
 updates:
-  # npm dependencies
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -12,56 +8,27 @@ updates:
       time: '09:00'
       timezone: 'America/Sao_Paulo'
     open-pull-requests-limit: 10
-    commit-message:
-      prefix: 'chore(deps)'
-      prefix-development: 'chore(deps-dev)'
+    reviewers:
+      - 'ESousa97'
     labels:
       - 'dependencies'
-      - 'automated'
+      - 'security'
+    commit-message:
+      prefix: 'deps'
     groups:
-      # Group minor and patch updates together
-      minor-and-patch:
+      production-dependencies:
         patterns:
           - '*'
-        update-types:
-          - 'minor'
-          - 'patch'
-      # Keep major updates separate
-      major:
-        patterns:
-          - '*'
-        update-types:
-          - 'major'
-    ignore:
-      # Ignore Node.js version updates (handled manually)
-      - dependency-name: 'node'
+        exclude-patterns:
+          - '@types/*'
+          - 'eslint*'
+          - 'prettier*'
+          - 'vitest*'
 
-  # GitHub Actions
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-      timezone: 'America/Sao_Paulo'
-    commit-message:
-      prefix: 'chore(actions)'
+      interval: 'monthly'
     labels:
+      - 'ci'
       - 'dependencies'
-      - 'github-actions'
-      - 'automated'
-
-  # Docker
-  - package-ecosystem: 'docker'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-      timezone: 'America/Sao_Paulo'
-    commit-message:
-      prefix: 'chore(docker)'
-    labels:
-      - 'dependencies'
-      - 'docker'
-      - 'automated'

@@ -1,9 +1,8 @@
-node_modules
-coverage
-logs
+node_modules/
+coverage/
+dist/
+build/
+logs/
 *.sqlite
-*.sqlite3
-*.log
-.env
-BASELINE.md
-FINAL.md
+*.db
+package-lock.json

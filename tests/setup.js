@@ -1,21 +1,15 @@
-// tests/setup.js
-// Configuração global para testes
+import { beforeAll, afterAll } from 'vitest';
 
-import dotenv from 'dotenv';
-
-// Carrega variáveis de ambiente de teste
-dotenv.config({ path: '.env.test' });
-
-// Configura variáveis padrão para testes
+// Set test environment
 process.env.NODE_ENV = 'test';
-process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes';
-process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-key-for-testing-purposes';
-process.env.LOG_LEVEL = 'error'; // Silencia logs durante testes
+process.env.JWT_SECRET = 'test-jwt-secret-for-testing';
+process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret-for-testing';
+process.env.DB_DIALECT = 'sqlite';
 
-// Timeout global para testes
-jest.setTimeout(10000);
+beforeAll(() => {
+  // Setup before all tests
+});
 
-// Limpa mocks após cada teste
-afterEach(() => {
-  jest.clearAllMocks();
+afterAll(() => {
+  // Cleanup after all tests
 });

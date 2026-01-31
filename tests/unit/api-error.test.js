@@ -1,4 +1,5 @@
 // tests/unit/api-error.test.js
+import { describe, it, expect } from 'vitest';
 import { ApiError } from '../../utils/api-error.js';
 
 describe('ApiError', () => {

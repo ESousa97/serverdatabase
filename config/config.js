@@ -5,11 +5,11 @@ dotenv.config();
 const config = {
   development: {
     dialect: 'sqlite',
-    storage: process.env.SQLITE_STORAGE || './database.sqlite'
+    storage: process.env.SQLITE_STORAGE || './database.sqlite',
   },
   test: {
     dialect: 'sqlite',
-    storage: ':memory:'
+    storage: ':memory:',
   },
   production: {
     dialect: process.env.DB_DIALECT || 'postgres',
@@ -21,10 +21,10 @@ const config = {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false
-      }
-    }
-  }
+        rejectUnauthorized: false,
+      },
+    },
+  },
 };
 
 export default config;
