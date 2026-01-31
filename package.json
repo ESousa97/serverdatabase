@@ -45,14 +45,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-security": "^3.0.1",
     "prettier": "^3.4.2",
     "sequelize-cli": "^6.6.2",
     "supertest": "^7.0.0",
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.18"
   },
   "overrides": {
     "jws": "^4.0.0",
