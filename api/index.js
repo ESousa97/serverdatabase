@@ -22,7 +22,10 @@ if (process.env.SENTRY_DSN) {
 
 // Validate required environment variables
 const requiredEnvVars = ['JWT_SECRET', 'JWT_REFRESH_SECRET'];
-const missingVars = requiredEnvVars.filter((v) => !Object.hasOwn(process.env, v) || !process.env[v]);
+const missingVars = requiredEnvVars.filter((v) => {
+  const hasVar = Object.hasOwn(process.env, v);
+  return !hasVar || !Object.getOwnPropertyDescriptor(process.env, v)?.value;
+});
 
 if (missingVars.length > 0) {
   logger.error(`Missing required environment variables: ${missingVars.join(', ')}`);

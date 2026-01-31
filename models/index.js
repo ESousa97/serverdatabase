@@ -18,7 +18,7 @@ import configModule from '../config/config.js';
 // Validate environment against allowed values to prevent object injection
 const allowedEnvs = ['development', 'test', 'production'];
 const safeEnv = allowedEnvs.includes(env) ? env : 'development';
-const config = configModule[safeEnv];
+const config = Object.getOwnPropertyDescriptor(configModule, safeEnv)?.value;
 
 const db = {};
 
@@ -58,8 +58,9 @@ await Promise.all(
 
 // Executa as associações (se definidas)
 Object.keys(db).forEach((modelName) => {
-  if (Object.hasOwn(db, modelName) && typeof db[modelName].associate === 'function') {
-    db[modelName].associate(db);
+  const model = Object.getOwnPropertyDescriptor(db, modelName)?.value;
+  if (model && typeof model.associate === 'function') {
+    model.associate(db);
   }
 });
 
