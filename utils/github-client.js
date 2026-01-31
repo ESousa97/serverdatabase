@@ -37,18 +37,53 @@ githubApi.interceptors.response.use(
 );
 
 /**
+ * Valida o formato do repositório GitHub
+ * @param {string} repo - Repositório no formato owner/repo
+ * @returns {boolean} true se válido
+ */
+const isValidRepoFormat = (repo) => {
+  if (!repo || typeof repo !== 'string') return false;
+  // Formato: owner/repo (apenas alfanumérico, hífens e underscores)
+  const repoRegex = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
+  return repoRegex.test(repo);
+};
+
+/**
+ * Sanitiza path para prevenir path traversal
+ * @param {string} path - Path a ser sanitizado
+ * @returns {string} Path sanitizado
+ */
+const sanitizePath = (path) => {
+  if (!path) return '';
+  // Remove ../ e caracteres perigosos
+  return path
+    .replace(/\.\.\/|\.\.\\/g, '')
+    .replace(/^[\/\\]+/, '')
+    .replace(/[\/\\]+$/, '');
+};
+
+/**
  * Configuração padrão do repositório
  */
-const getRepoConfig = () => ({
-  repo: process.env.GITHUB_REPO,
-  branch: process.env.GITHUB_BRANCH || 'main',
-  basePath: process.env.GITHUB_ASSETS_BASE || 'public/assets',
-  uploadPath: process.env.GITHUB_UPLOAD_PATH || 'public/assets',
-  committer: {
-    name: process.env.COMMITTER_NAME || 'API Bot',
-    email: process.env.COMMITTER_EMAIL || 'bot@api.local',
-  },
-});
+const getRepoConfig = () => {
+  const repo = process.env.GITHUB_REPO;
+  
+  // Valida formato do repositório
+  if (!isValidRepoFormat(repo)) {
+    throw new Error('Invalid GITHUB_REPO format. Expected: owner/repo');
+  }
+
+  return {
+    repo,
+    branch: process.env.GITHUB_BRANCH || 'main',
+    basePath: sanitizePath(process.env.GITHUB_ASSETS_BASE || 'public/assets'),
+    uploadPath: sanitizePath(process.env.GITHUB_UPLOAD_PATH || 'public/assets'),
+    committer: {
+      name: process.env.COMMITTER_NAME || 'API Bot',
+      email: process.env.COMMITTER_EMAIL || 'bot@api.local',
+    },
+  };
+};
 
 /**
  * Lista diretórios em um caminho
@@ -57,8 +92,9 @@ const getRepoConfig = () => ({
  */
 export const listDirectories = async (path = '') => {
   const config = getRepoConfig();
-  const fullPath = path ? `${config.basePath}/${path}` : config.basePath;
-  const url = `/repos/${config.repo}/contents/${fullPath}`;
+  const sanitizedPath = sanitizePath(path);
+  const fullPath = sanitizedPath ? `${config.basePath}/${sanitizedPath}` : config.basePath;
+  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
 
   const response = await githubApi.get(url, {
     params: { ref: config.branch },
@@ -74,7 +110,8 @@ export const listDirectories = async (path = '') => {
  */
 export const listDirectoryContent = async (directory) => {
   const config = getRepoConfig();
-  const url = `/repos/${config.repo}/contents/${config.basePath}/${directory}`;
+  const sanitizedDir = sanitizePath(directory);
+  const url = `/repos/${config.repo}/contents/${config.basePath}/${sanitizedDir}`;
 
   try {
     const response = await githubApi.get(url, {
@@ -103,8 +140,9 @@ export const listDirectoryContent = async (directory) => {
  */
 export const getFileInfo = async (filePath) => {
   const config = getRepoConfig();
-  const fullPath = `${config.basePath}/${filePath}`;
-  const url = `/repos/${config.repo}/contents/${fullPath}`;
+  const sanitizedFilePath = sanitizePath(filePath);
+  const fullPath = `${config.basePath}/${sanitizedFilePath}`;
+  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
 
   const response = await githubApi.get(url, {
     params: { ref: config.branch },
@@ -124,8 +162,9 @@ export const getFileInfo = async (filePath) => {
  */
 export const createOrUpdateFile = async ({ path, content, message, sha }) => {
   const config = getRepoConfig();
-  const fullPath = `${config.uploadPath}/${path}`;
-  const url = `/repos/${config.repo}/contents/${fullPath}`;
+  const sanitizedPath = sanitizePath(path);
+  const fullPath = `${config.uploadPath}/${sanitizedPath}`;
+  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
 
   const payload = {
     message,
@@ -152,8 +191,9 @@ export const createOrUpdateFile = async ({ path, content, message, sha }) => {
  */
 export const deleteFile = async ({ path, sha, message }) => {
   const config = getRepoConfig();
-  const fullPath = `${config.basePath}/${path}`;
-  const url = `/repos/${config.repo}/contents/${fullPath}`;
+  const sanitizedPath = sanitizePath(path);
+  const fullPath = `${config.basePath}/${sanitizedPath}`;
+  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
 
   await githubApi.delete(url, {
     data: {
