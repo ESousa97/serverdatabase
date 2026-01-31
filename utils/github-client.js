@@ -94,7 +94,7 @@ export const listDirectories = async (path = '') => {
   const config = getRepoConfig();
   const sanitizedPath = sanitizePath(path);
   const fullPath = sanitizedPath ? `${config.basePath}/${sanitizedPath}` : config.basePath;
-  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
+  const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   const response = await githubApi.get(url, {
     params: { ref: config.branch },
@@ -142,7 +142,7 @@ export const getFileInfo = async (filePath) => {
   const config = getRepoConfig();
   const sanitizedFilePath = sanitizePath(filePath);
   const fullPath = `${config.basePath}/${sanitizedFilePath}`;
-  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
+  const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   const response = await githubApi.get(url, {
     params: { ref: config.branch },
@@ -164,7 +164,7 @@ export const createOrUpdateFile = async ({ path, content, message, sha }) => {
   const config = getRepoConfig();
   const sanitizedPath = sanitizePath(path);
   const fullPath = `${config.uploadPath}/${sanitizedPath}`;
-  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
+  const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   const payload = {
     message,
@@ -193,7 +193,7 @@ export const deleteFile = async ({ path, sha, message }) => {
   const config = getRepoConfig();
   const sanitizedPath = sanitizePath(path);
   const fullPath = `${config.basePath}/${sanitizedPath}`;
-  const url = `/repos/${config.repo}/contents/${sanitizePath(fullPath)}`;
+  const url = `/repos/${config.repo}/contents/${fullPath}`;
 
   await githubApi.delete(url, {
     data: {
