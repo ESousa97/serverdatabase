@@ -110,6 +110,7 @@ const csrfCookieSecure = csrfCookieSameSite === 'none' ? true : isProduction;
 
 const csrfProtection = doubleCsrf({
   getSecret: () => csrfSecret,
+  getSessionIdentifier: (req) => req.ip || req.headers['x-forwarded-for'] || 'anonymous',
   cookieName: 'x-csrf-token',
   cookieOptions: {
     httpOnly: true,
