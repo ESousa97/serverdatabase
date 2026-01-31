@@ -14,7 +14,11 @@ const env = process.env.NODE_ENV || 'development';
 
 // Importe o arquivo de configuração; ajuste conforme a forma como ele é exportado
 import configModule from '../config/config.js';
-const config = configModule[env];
+
+// Validate environment against allowed values to prevent object injection
+const allowedEnvs = ['development', 'test', 'production'];
+const safeEnv = allowedEnvs.includes(env) ? env : 'development';
+const config = configModule[safeEnv];
 
 const db = {};
 
@@ -54,7 +58,7 @@ await Promise.all(
 
 // Executa as associações (se definidas)
 Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
+  if (Object.hasOwn(db, modelName) && typeof db[modelName].associate === 'function') {
     db[modelName].associate(db);
   }
 });
