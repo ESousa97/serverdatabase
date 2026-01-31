@@ -29,14 +29,9 @@ const posixPath = path.posix || path;
 const buildSafeRepoPath = (basePath, subPath = '') => {
   const normalizedBase = basePath.replace(/^\/+/, '').replace(/\/+$/, '');
   const safeSubPath = (subPath || '').replace(/^\/+/, '');
-  const fullPath = safeSubPath
-    ? posixPath.join(normalizedBase, safeSubPath)
-    : normalizedBase;
+  const fullPath = safeSubPath ? posixPath.join(normalizedBase, safeSubPath) : normalizedBase;
 
-  if (
-    fullPath !== normalizedBase &&
-    !fullPath.startsWith(normalizedBase + '/')
-  ) {
+  if (fullPath !== normalizedBase && !fullPath.startsWith(normalizedBase + '/')) {
     throw new Error('Invalid path: outside of allowed base path');
   }
 
