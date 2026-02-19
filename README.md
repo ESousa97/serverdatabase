@@ -143,13 +143,13 @@ graph TD
 
 ### Camadas Principais
 
-| Camada             | Responsabilidade                                                                |
-| ------------------ | ------------------------------------------------------------------------------- |
-| **Middleware**      | CORS, Helmet, CSRF, auth JWT, validação (express-validator), error handling     |
-| **Routes (api/)**  | Controllers para auth, projects, cards, categories, search, file management     |
-| **Services**       | Lógica de negócio (authService com login/refresh)                               |
-| **Models**         | Sequelize models (Project, Card, User) com migrations e seeders                 |
-| **Utils**          | ApiError, github-client (path traversal safe), Winston logger                   |
+| Camada            | Responsabilidade                                                            |
+| ----------------- | --------------------------------------------------------------------------- |
+| **Middleware**    | CORS, Helmet, CSRF, auth JWT, validação (express-validator), error handling |
+| **Routes (api/)** | Controllers para auth, projects, cards, categories, search, file management |
+| **Services**      | Lógica de negócio (authService com login/refresh)                           |
+| **Models**        | Sequelize models (Project, Card, User) com migrations e seeders             |
+| **Utils**         | ApiError, github-client (path traversal safe), Winston logger               |
 
 ---
 
@@ -318,26 +318,26 @@ Swagger docs em: `http://localhost:8000/api-docs`
 
 ## API Endpoints
 
-| Método         | Endpoint                          | Descrição                 | Auth    |
-| -------------- | --------------------------------- | ------------------------- | ------- |
-| GET            | `/api/v1/ping`                    | Health check              | —       |
-| GET            | `/api/v1/csrf-token`              | Obter token CSRF          | —       |
-| GET            | `/api/v1/server-info`             | Info do servidor (dev)    | —       |
-| POST           | `/api/v1/auth/login`              | Login (retorna JWT)       | —       |
-| POST           | `/api/v1/auth/refresh`            | Renovar access token      | Cookie  |
-| POST           | `/api/v1/auth/logout`             | Logout (limpa cookie)     | —       |
-| GET/POST       | `/api/v1/projects`                | Listar/Criar projetos     | —/CSRF  |
-| GET/PUT/DELETE  | `/api/v1/projects/:id`           | Operações em projeto      | CSRF    |
-| GET/POST       | `/api/v1/cards`                   | Listar/Criar cards        | —/CSRF  |
-| GET/PUT/DELETE  | `/api/v1/cards/:id`              | Operações em card         | CSRF    |
-| GET            | `/api/v1/categories`              | Listar categorias         | —       |
-| GET            | `/api/v1/search?query=`           | Busca em projetos         | —       |
-| POST           | `/api/v1/imageupload`             | Upload de imagem          | CSRF    |
-| GET            | `/api/v1/directories`             | Listar diretórios         | —       |
-| GET            | `/api/v1/directory-content/:dir`  | Conteúdo de diretório     | —       |
-| POST           | `/api/v1/create-directory`        | Criar diretório           | CSRF    |
-| DELETE         | `/api/v1/delete-content`          | Excluir arquivo/diretório | CSRF    |
-| PUT            | `/api/v1/rename-content`          | Renomear arquivo          | CSRF    |
+| Método         | Endpoint                         | Descrição                 | Auth   |
+| -------------- | -------------------------------- | ------------------------- | ------ |
+| GET            | `/api/v1/ping`                   | Health check              | —      |
+| GET            | `/api/v1/csrf-token`             | Obter token CSRF          | —      |
+| GET            | `/api/v1/server-info`            | Info do servidor (dev)    | —      |
+| POST           | `/api/v1/auth/login`             | Login (retorna JWT)       | —      |
+| POST           | `/api/v1/auth/refresh`           | Renovar access token      | Cookie |
+| POST           | `/api/v1/auth/logout`            | Logout (limpa cookie)     | —      |
+| GET/POST       | `/api/v1/projects`               | Listar/Criar projetos     | —/CSRF |
+| GET/PUT/DELETE | `/api/v1/projects/:id`           | Operações em projeto      | CSRF   |
+| GET/POST       | `/api/v1/cards`                  | Listar/Criar cards        | —/CSRF |
+| GET/PUT/DELETE | `/api/v1/cards/:id`              | Operações em card         | CSRF   |
+| GET            | `/api/v1/categories`             | Listar categorias         | —      |
+| GET            | `/api/v1/search?query=`          | Busca em projetos         | —      |
+| POST           | `/api/v1/imageupload`            | Upload de imagem          | CSRF   |
+| GET            | `/api/v1/directories`            | Listar diretórios         | —      |
+| GET            | `/api/v1/directory-content/:dir` | Conteúdo de diretório     | —      |
+| POST           | `/api/v1/create-directory`       | Criar diretório           | CSRF   |
+| DELETE         | `/api/v1/delete-content`         | Excluir arquivo/diretório | CSRF   |
+| PUT            | `/api/v1/rename-content`         | Renomear arquivo          | CSRF   |
 
 Documentação completa interativa disponível em `/api-docs` com o servidor em execução.
 
@@ -443,24 +443,28 @@ O healthcheck verifica `/api/v1/ping` a cada 30s com timeout de 3s.
 <summary><strong>Como trocar de SQLite para PostgreSQL em produção?</strong></summary>
 
 Altere `DB_DIALECT=postgres` no `.env` e configure `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. A configuração em `config/config.js` habilita SSL automaticamente em produção. Execute `npm run db:migrate` para criar as tabelas.
+
 </details>
 
 <details>
 <summary><strong>Como funciona a integração com GitHub para upload?</strong></summary>
 
 O endpoint `/api/v1/imageupload` recebe arquivos via Multer (memória, 10MB max), converte para base64 e faz push via GitHub Contents API. É necessário configurar `GITHUB_REPO`, `GITHUB_TOKEN` e `GITHUB_UPLOAD_PATH` no `.env`. Arquivos existentes retornam 409 a menos que `overwrite=true`.
+
 </details>
 
 <details>
 <summary><strong>Como obter e usar o token CSRF?</strong></summary>
 
 Faça `GET /api/v1/csrf-token` para obter o token. Envie-o no header `X-CSRF-Token` em todas as requisições POST/PUT/DELETE (exceto auth). Rotas de leitura (GET/HEAD/OPTIONS) são isentas automaticamente.
+
 </details>
 
 <details>
 <summary><strong>O que o seed de dados cria?</strong></summary>
 
 `npm run db:seed` cria um projeto demo (título "Projeto Demo", categoria "Teste") e um usuário admin (`admin@teste.com` / `123456`). Use `npm run db:reset` para recriar tudo do zero.
+
 </details>
 
 ---
